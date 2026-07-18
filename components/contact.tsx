@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { DecodedText } from './decoded-text'
 import { Mail, Phone, Code, Briefcase, MapPin } from 'lucide-react'
 
 export function Contact() {
@@ -66,7 +65,7 @@ export function Contact() {
         viewport={{ once: true }}
       >
         <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-          <DecodedText text="Let's Connect" />
+          Let&apos;s Connect
         </h2>
         <p className="text-lg text-muted-foreground mb-12 max-w-2xl">
           I&apos;m always interested in hearing about new projects and opportunities.
@@ -88,23 +87,22 @@ export function Contact() {
                 href={link.href}
                 target={link.href.startsWith('http') ? '_blank' : '_self'}
                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                className="subtle-border rounded-lg p-6 hover:border-accent/50 hover:bg-muted/30 transition-all group no-underline text-foreground"
+                className="subtle-border rounded-lg p-6 hover:border-accent/50 hover:bg-muted/30 hover:-translate-y-1 transition-[border-color,background-color,transform] duration-200 group no-underline text-foreground contact-card"
                 variants={itemVariants}
-                whileHover={{ y: -5 }}
                 style={{ color: 'inherit', textDecoration: 'none' }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-muted/50 group-hover:bg-accent/20 transition-colors">
+                  <div className="p-3 rounded-lg bg-muted/50 group-hover:bg-accent/20 transition-colors duration-200">
                     <Icon
                       size={24}
-                      className="text-accent group-hover:text-accent transition-colors"
+                      className="text-accent"
                     />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-foreground group-hover:text-accent mb-1 transition-colors" style={{ color: undefined }}>
+                    <h3 className="font-semibold text-foreground group-hover:text-accent mb-1 transition-colors duration-200">
                       {link.label}
                     </h3>
-                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-200">
                       {link.value}
                     </p>
                   </div>

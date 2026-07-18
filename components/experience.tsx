@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
-import { DecodedText } from './decoded-text'
+
 
 const experiences = [
   {
@@ -42,7 +42,7 @@ export function Experience() {
         viewport={{ once: true }}
       >
         <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-16">
-          <DecodedText text="Experience" />
+          Experience
         </h2>
 
         <div className="relative ml-3 md:ml-8">
@@ -83,7 +83,8 @@ export function Experience() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-10%' }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: idx * 0.1 }}
-                  className="subtle-border rounded-xl p-5 md:p-8 bg-card/40 backdrop-blur-sm hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 transition-all duration-300 group"
+                  className="subtle-border rounded-xl p-5 md:p-8 bg-card/80 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 hover:-translate-y-1 transition-[border-color,box-shadow,transform] duration-200 group"
+                  style={{ willChange: 'transform, opacity' }}
                 >
                   <div className="flex flex-col gap-2 mb-5 md:mb-6">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">

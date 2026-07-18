@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { DecodedText } from './decoded-text'
+
 
 export function About() {
   const techStacks = [
@@ -43,7 +43,7 @@ export function About() {
         viewport={{ once: true }}
       >
         <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8">
-          <DecodedText text="About" />
+          About
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

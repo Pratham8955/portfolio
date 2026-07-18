@@ -16,134 +16,107 @@ export function InteractiveCanvas() {
     if (!ctx) return
 
     let animationFrameId: number
+    let lastTime = 0
+    let isScrolling = false
+    let scrollTimeout: ReturnType<typeof setTimeout>
+
+    // Only 16fps — minimal CPU impact
+    const TARGET_FPS = 16
+    const FRAME_INTERVAL = 1000 / TARGET_FPS
+
     let width = (canvas.width = window.innerWidth)
     let height = (canvas.height = window.innerHeight)
 
-    // Reduced particle count for performance
-    const particleCount = Math.min(50, Math.floor((width * height) / 30000))
-    const connectionDistance = 100
-    const connectionDistanceSq = connectionDistance * connectionDistance
-    const mouse = { x: null as number | null, y: null as number | null, radius: 120 }
-    let mousePending = false
+    const particleCount = Math.min(20, Math.floor((width * height) / 80000))
+    const connectionDistanceSq = 70 * 70
 
-    class Particle {
-      x: number
-      y: number
-      vx: number
-      vy: number
-      radius: number
-
-      constructor() {
-        this.x = Math.random() * width
-        this.y = Math.random() * height
-        this.vx = (Math.random() - 0.5) * 0.25
-        this.vy = (Math.random() - 0.5) * 0.25
-        this.radius = Math.random() * 1.2 + 0.4
-      }
-
-      update() {
-        this.x += this.vx
-        this.y += this.vy
-
-        if (this.x < 0) this.x = width
-        if (this.x > width) this.x = 0
-        if (this.y < 0) this.y = height
-        if (this.y > height) this.y = 0
-
-        if (mouse.x !== null && mouse.y !== null) {
-          const dx = mouse.x - this.x
-          const dy = mouse.y - this.y
-          const distSq = dx * dx + dy * dy
-          const radiusSq = mouse.radius * mouse.radius
-          if (distSq < radiusSq) {
-            const dist = Math.sqrt(distSq)
-            const force = (mouse.radius - dist) / mouse.radius
-            const angle = Math.atan2(dy, dx)
-            this.x -= Math.cos(angle) * force * 1.0
-            this.y -= Math.sin(angle) * force * 1.0
-          }
-        }
-      }
-    }
-
-    const particles: Particle[] = []
+    interface ParticleData { x: number; y: number; vx: number; vy: number; radius: number }
+    const particles: ParticleData[] = []
 
     const init = () => {
       particles.length = 0
       for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle())
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15,
+          radius: Math.random() * 1.0 + 0.4,
+        })
       }
     }
 
-    const animate = () => {
+    const animate = (timestamp: number) => {
+      animationFrameId = requestAnimationFrame(animate)
+
+      // Pause canvas drawing while user is scrolling — frees the main thread
+      if (isScrolling) return
+
+      const delta = timestamp - lastTime
+      if (delta < FRAME_INTERVAL) return
+      lastTime = timestamp - (delta % FRAME_INTERVAL)
+
       ctx.clearRect(0, 0, width, height)
 
-      // Draw particles
-      ctx.fillStyle = 'rgba(59, 130, 246, 0.25)'
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.3)'
+      ctx.beginPath()
       for (let i = 0; i < particles.length; i++) {
-        particles[i].update()
-        ctx.beginPath()
-        ctx.arc(particles[i].x, particles[i].y, particles[i].radius, 0, Math.PI * 2)
-        ctx.fill()
+        const p = particles[i]
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < 0) p.x = width
+        if (p.x > width) p.x = 0
+        if (p.y < 0) p.y = height
+        if (p.y > height) p.y = 0
+        ctx.moveTo(p.x + p.radius, p.y)
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
       }
+      ctx.fill()
 
-      // Draw connections — batched by opacity bucket to reduce ctx state changes
-      ctx.lineWidth = 0.7
+      ctx.lineWidth = 0.5
+      ctx.strokeStyle = 'rgba(59,130,246,0.05)'
+      ctx.beginPath()
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x
           const dy = particles[i].y - particles[j].y
-          const distSq = dx * dx + dy * dy
-
-          if (distSq < connectionDistanceSq) {
-            const opacity = (1 - Math.sqrt(distSq) / connectionDistance) * 0.08
-            ctx.beginPath()
+          if (dx * dx + dy * dy < connectionDistanceSq) {
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.strokeStyle = `rgba(59,130,246,${opacity.toFixed(2)})`
-            ctx.stroke()
           }
         }
       }
-
-      animationFrameId = requestAnimationFrame(animate)
+      ctx.stroke()
     }
 
+    const onScroll = () => {
+      isScrolling = true
+      clearTimeout(scrollTimeout)
+      scrollTimeout = setTimeout(() => { isScrolling = false }, 150)
+    }
+
+    let resizeTimeout: ReturnType<typeof setTimeout>
     const handleResize = () => {
-      if (!canvas) return
-      width = canvas.width = window.innerWidth
-      height = canvas.height = window.innerHeight
-      init()
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        width = canvas.width = window.innerWidth
+        height = canvas.height = window.innerHeight
+        init()
+      }, 200)
     }
 
-    // Throttle mousemove via rAF flag — fires at most once per frame
-    const handleMouseMove = (e: MouseEvent) => {
-      if (mousePending) return
-      mousePending = true
-      requestAnimationFrame(() => {
-        mouse.x = e.clientX
-        mouse.y = e.clientY
-        mousePending = false
-      })
-    }
-
-    const handleMouseLeave = () => {
-      mouse.x = null
-      mouse.y = null
-    }
-
-    window.addEventListener('resize', handleResize)
-    window.addEventListener('mousemove', handleMouseMove, { passive: true })
-    document.addEventListener('mouseleave', handleMouseLeave)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', handleResize, { passive: true })
 
     init()
-    animate()
+    animationFrameId = requestAnimationFrame(animate)
 
     return () => {
       cancelAnimationFrame(animationFrameId)
+      clearTimeout(resizeTimeout)
+      clearTimeout(scrollTimeout)
+      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', handleResize)
-      window.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseleave', handleMouseLeave)
     }
   }, [shouldReduceMotion])
 

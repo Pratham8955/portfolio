@@ -1,42 +1,57 @@
 'use client'
 
-import { useEffect } from 'react'
-import { motion, useSpring, useMotionValue } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 
 export function CustomCursor() {
-  const cursorX = useMotionValue(-100)
-  const cursorY = useMotionValue(-100)
-
-  // Dot — near-instant
-  const dotX = useSpring(cursorX, { stiffness: 2000, damping: 80, mass: 0.05 })
-  const dotY = useSpring(cursorY, { stiffness: 2000, damping: 80, mass: 0.05 })
-
-  // Ring — lazy trail
-  const ringX = useSpring(cursorX, { stiffness: 150, damping: 22, mass: 0.4 })
-  const ringY = useSpring(cursorY, { stiffness: 150, damping: 22, mass: 0.4 })
+  const dotRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return
 
+    const dot = dotRef.current
+    const ring = ringRef.current
+    if (!dot || !ring) return
+
+    let dotX = -100, dotY = -100
+    let ringX = -100, ringY = -100
+    let rafId: number
+
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX)
-      cursorY.set(e.clientY)
+      dotX = e.clientX
+      dotY = e.clientY
+    }
+
+    // Lerp ring toward dot each animation frame — smooth trail, zero spring overhead
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+    const RING_SPEED = 0.18
+
+    const tick = () => {
+      ringX = lerp(ringX, dotX, RING_SPEED)
+      ringY = lerp(ringY, dotY, RING_SPEED)
+
+      dot.style.transform = `translate(${dotX - 4}px, ${dotY - 4}px)`
+      ring.style.transform = `translate(${ringX - 16}px, ${ringY - 16}px)`
+
+      rafId = requestAnimationFrame(tick)
     }
 
     window.addEventListener('mousemove', moveCursor, { passive: true })
-    return () => window.removeEventListener('mousemove', moveCursor)
-  }, [cursorX, cursorY])
+    rafId = requestAnimationFrame(tick)
+
+    return () => {
+      window.removeEventListener('mousemove', moveCursor)
+      cancelAnimationFrame(rafId)
+    }
+  }, [])
 
   return (
     <>
-      {/* Inner glowing dot */}
-      <motion.div
-        className="pointer-events-none fixed z-[9999] rounded-full will-change-transform"
+      {/* Inner dot */}
+      <div
+        ref={dotRef}
+        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full will-change-transform"
         style={{
-          x: dotX,
-          y: dotY,
-          translateX: '-50%',
-          translateY: '-50%',
           width: 8,
           height: 8,
           backgroundColor: 'rgba(59,130,246,0.95)',
@@ -45,13 +60,10 @@ export function CustomCursor() {
       />
 
       {/* Trailing ring */}
-      <motion.div
-        className="pointer-events-none fixed z-[9998] rounded-full will-change-transform"
+      <div
+        ref={ringRef}
+        className="pointer-events-none fixed top-0 left-0 z-[9998] rounded-full will-change-transform"
         style={{
-          x: ringX,
-          y: ringY,
-          translateX: '-50%',
-          translateY: '-50%',
           width: 32,
           height: 32,
           border: '1.5px solid rgba(59,130,246,0.4)',

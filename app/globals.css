@@ -138,13 +138,8 @@
     background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
     background-position: center top;
   }
-  body::before {
-    content: "";
-    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.03];
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  }
   html {
-    @apply scroll-smooth;
+    /* scroll-smooth is handled by Lenis — no native CSS scroll needed */
   }
 }
 
@@ -155,6 +150,9 @@
   
   .section-padding {
     @apply py-16 md:py-24;
+    /* Skip rendering for offscreen sections — massive perf win */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
   }
   
   .tech-badge {

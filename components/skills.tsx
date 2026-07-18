@@ -1,7 +1,6 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
-import { DecodedText } from './decoded-text'
 import {
   Code2,
   Terminal,
@@ -16,7 +15,7 @@ import {
   Cpu as CpuIcon
 } from 'lucide-react'
 
-const row1Skills = [
+const allSkills = [
   { name: 'Java', icon: Code2 },
   { name: 'JavaScript', icon: Terminal },
   { name: 'HTML', icon: Globe },
@@ -27,9 +26,6 @@ const row1Skills = [
   { name: 'Git', icon: GitBranch },
   { name: 'Docker', icon: Layers },
   { name: 'VS Code', icon: Terminal },
-]
-
-const row2Skills = [
   { name: 'C#', icon: Code2 },
   { name: 'TypeScript', icon: Terminal },
   { name: 'CSS', icon: Globe },
@@ -50,41 +46,6 @@ const competencies = [
   { label: 'Agile & Team Collaboration', percentage: 95 },
   { label: 'CI/CD & Cloud Deployment', percentage: 60 },
 ]
-
-function Marquee({ items, direction = 'left', speed = 35, shouldReduceMotion }: { items: typeof row1Skills, direction?: 'left' | 'right', speed?: number, shouldReduceMotion: boolean }) {
-  const duplicatedItems = [...items, ...items]
-
-  return (
-    <div className="relative w-full overflow-hidden py-3">
-      {/* Soft gradient fade on left and right edges */}
-      <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-
-      <div
-        className={`flex gap-4 w-max hover:[animation-play-state:paused] ${shouldReduceMotion
-          ? ''
-          : direction === 'left'
-            ? 'animate-marquee'
-            : 'animate-marquee-reverse'
-          }`}
-        style={{ '--speed': `${speed}s` } as React.CSSProperties}
-      >
-        {duplicatedItems.map((item, idx) => {
-          const Icon = item.icon
-          return (
-            <div
-              key={idx}
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-border/40 bg-card/30 backdrop-blur-sm hover:border-accent/40 hover:text-accent transition-all duration-300 select-none group"
-            >
-              <Icon size={16} className="text-muted-foreground group-hover:text-accent transition-colors duration-300" />
-              <span className="text-sm font-medium text-foreground">{item.name}</span>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
 
 function ProgressBar({ label, percentage, shouldReduceMotion }: { label: string, percentage: number, shouldReduceMotion: boolean }) {
   return (
@@ -109,6 +70,25 @@ function ProgressBar({ label, percentage, shouldReduceMotion }: { label: string,
 export function Skills() {
   const shouldReduceMotion = !!useReducedMotion()
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.04,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  }
+
   return (
     <section id="skills" className="portfolio-container section-padding">
       <motion.div
@@ -120,18 +100,35 @@ export function Skills() {
       >
         <div>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            <DecodedText text="Skills & Expertise" />
+            Skills &amp; Expertise
           </h2>
           <p className="text-muted-foreground max-w-xl">
             A snapshot of technologies I use to build scalable full-stack applications.
           </p>
         </div>
 
-        {/* Marquees */}
-        <div className="space-y-4 py-2">
-          <Marquee items={row1Skills} direction="left" speed={30} shouldReduceMotion={shouldReduceMotion} />
-          <Marquee items={row2Skills} direction="right" speed={32} shouldReduceMotion={shouldReduceMotion} />
-        </div>
+        {/* Static skills grid */}
+        <motion.div
+          className="flex flex-wrap gap-3"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {allSkills.map((item, idx) => {
+            const Icon = item.icon
+            return (
+              <motion.div
+                key={idx}
+                variants={itemVariants}
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-medium bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-colors duration-200 group"
+              >
+                <Icon size={16} className="text-muted-foreground group-hover:text-accent transition-colors duration-200" />
+                <span>{item.name}</span>
+              </motion.div>
+            )
+          })}
+        </motion.div>
 
         {/* Competencies Progress Bars */}
         <div className="pt-8">

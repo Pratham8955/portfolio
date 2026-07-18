@@ -1,9 +1,9 @@
 'use client'
 
-import { motion, useMotionValue, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
 import { useState } from 'react'
-import { DecodedText } from './decoded-text'
+
 
 const projects = [
   {
@@ -42,96 +42,64 @@ const projects = [
 
 function ProjectCard({ project, variants }: { project: typeof projects[0], variants: any }) {
   const shouldReduceMotion = !!useReducedMotion()
-  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
-
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  // Maps coordinates between -0.5 and 0.5 to degrees of rotation between -10 and 10
-  const rotateX = useTransform(y, [-0.5, 0.5], [10, -10])
-  const rotateY = useTransform(x, [-0.5, 0.5], [-10, 10])
-
-  function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const width = rect.width
-    const height = rect.height
-    const mouseX = event.clientX - rect.left - width / 2
-    const mouseY = event.clientY - rect.top - height / 2
-    x.set(mouseX / width)
-    y.set(mouseY / height)
-    setHoverPosition({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    })
-  }
-
-  function handleMouseLeave() {
-    x.set(0)
-    y.set(0)
-    setIsHovered(false)
-  }
 
   return (
     <motion.div
       variants={variants}
-      onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      style={shouldReduceMotion ? {} : { rotateX, rotateY, transformStyle: 'preserve-3d' }}
-      className="relative subtle-border rounded-xl p-5 md:p-8 bg-card/40 backdrop-blur-sm transition-all duration-300 hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 group cursor-pointer overflow-hidden"
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative subtle-border rounded-xl p-5 md:p-8 bg-card/80 transition-[border-color,box-shadow,transform] duration-200 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 hover:-translate-y-1 group cursor-pointer overflow-hidden"
+      style={{ willChange: 'transform, opacity' }}
     >
-      <div style={shouldReduceMotion ? {} : { transform: 'translateZ(20px)' }} className="transition-transform duration-200">
-        <div className="flex items-start justify-between mb-4">
-          <h3 className="text-lg md:text-2xl font-semibold text-foreground group-hover:text-accent transition-colors leading-snug">
-            {project.name}
-          </h3>
-          <ExternalLink
-            size={20}
-            className="text-muted-foreground group-hover:text-accent transition-colors opacity-0 group-hover:opacity-100 duration-200 shrink-0 ml-2"
-          />
+      <div className="flex items-start justify-between mb-4">
+        <h3 className="text-lg md:text-2xl font-semibold text-foreground group-hover:text-accent transition-colors leading-snug">
+          {project.name}
+        </h3>
+        <ExternalLink
+          size={20}
+          className="text-muted-foreground group-hover:text-accent transition-colors opacity-0 group-hover:opacity-100 duration-200 shrink-0 ml-2"
+        />
+      </div>
+
+      <p className="text-muted-foreground group-hover:text-foreground mb-4 text-sm leading-relaxed transition-colors">
+        {project.description}
+      </p>
+
+      <div className="space-y-4 mb-6">
+        <div>
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+            Problem Solved
+          </h4>
+          <p className="text-xs text-muted-foreground group-hover:text-foreground leading-relaxed transition-colors">{project.problem}</p>
         </div>
 
-        <p className="text-muted-foreground group-hover:text-foreground mb-4 text-sm leading-relaxed transition-colors">
-          {project.description}
-        </p>
-
-        <div className="space-y-4 mb-6">
-          <div>
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
-              Problem Solved
-            </h4>
-            <p className="text-xs text-muted-foreground group-hover:text-foreground leading-relaxed transition-colors">{project.problem}</p>
-          </div>
-
-          <div>
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
-              Key Technical Decision
-            </h4>
-            <p className="text-xs text-muted-foreground group-hover:text-foreground leading-relaxed transition-colors">
-              {project.technicalDecision}
-            </p>
-          </div>
+        <div>
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+            Key Technical Decision
+          </h4>
+          <p className="text-xs text-muted-foreground group-hover:text-foreground leading-relaxed transition-colors">
+            {project.technicalDecision}
+          </p>
         </div>
+      </div>
 
-        <div className="flex flex-wrap gap-2 pt-2 min-h-[36px]">
-          {project.technologies.map((tech, i) => (
-            <motion.span
-              key={tech}
-              className="tech-badge text-xs"
-              animate={isHovered ? { y: 0, opacity: 1 } : { y: 15, opacity: 0 }}
-              initial={{ y: 15, opacity: 0 }}
-              transition={shouldReduceMotion ? { duration: 0 } : {
-                delay: isHovered ? i * 0.03 : 0,
-                type: 'spring',
-                stiffness: 260,
-                damping: 20
-              }}
-            >
-              {tech}
-            </motion.span>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-2 pt-2 min-h-[36px]">
+        {project.technologies.map((tech, i) => (
+          <motion.span
+            key={tech}
+            className="tech-badge text-xs"
+            animate={isHovered ? { y: 0, opacity: 1 } : { y: 15, opacity: 0 }}
+            initial={{ y: 15, opacity: 0 }}
+            transition={shouldReduceMotion ? { duration: 0 } : {
+              delay: isHovered ? i * 0.04 : 0,
+              duration: 0.25,
+              ease: 'easeOut',
+            }}
+          >
+            {tech}
+          </motion.span>
+        ))}
       </div>
     </motion.div>
   )
@@ -166,7 +134,7 @@ export function Projects() {
         viewport={{ once: true }}
       >
         <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-12">
-          <DecodedText text="Featured Projects" />
+          Featured Projects
         </h2>
 
         <motion.div
