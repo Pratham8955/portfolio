@@ -119,13 +119,13 @@ export function Hero() {
           ))}
         </motion.div>
 
-        <motion.div variants={itemVariants} className="flex flex-wrap gap-4 pt-4">
+        <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-4">
           <Magnetic>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
+              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20 text-sm md:text-base"
             >
-              <Mail size={18} />
+              <Mail size={16} />
               Get in Touch
             </a>
           </Magnetic>
@@ -134,9 +134,9 @@ export function Hero() {
               href="https://github.com/Pratham8955"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-border/50 bg-background/50 backdrop-blur-sm text-foreground font-medium rounded-lg hover:bg-muted/50 hover:border-accent/50 hover:text-accent transition-all duration-300"
+              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 border border-border/50 bg-background/50 backdrop-blur-sm text-foreground font-medium rounded-lg hover:bg-muted/50 hover:border-accent/50 hover:text-accent transition-all duration-300 text-sm md:text-base"
             >
-              <Code size={18} />
+              <Code size={16} />
               GitHub
             </a>
           </Magnetic>
@@ -145,9 +145,9 @@ export function Hero() {
               href="https://www.linkedin.com/in/pratham-sali-7244a4216/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-border/50 bg-background/50 backdrop-blur-sm text-foreground font-medium rounded-lg hover:bg-muted/50 hover:border-accent/50 hover:text-accent transition-all duration-300"
+              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 border border-border/50 bg-background/50 backdrop-blur-sm text-foreground font-medium rounded-lg hover:bg-muted/50 hover:border-accent/50 hover:text-accent transition-all duration-300 text-sm md:text-base"
             >
-              <Briefcase size={18} />
+              <Briefcase size={16} />
               LinkedIn
             </a>
           </Magnetic>
@@ -156,9 +156,9 @@ export function Hero() {
               href="/Pratham_Sali_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-border/50 bg-background/50 backdrop-blur-sm text-foreground font-medium rounded-lg hover:bg-muted/50 hover:border-accent/50 hover:text-accent transition-all duration-300"
+              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 border border-border/50 bg-background/50 backdrop-blur-sm text-foreground font-medium rounded-lg hover:bg-muted/50 hover:border-accent/50 hover:text-accent transition-all duration-300 text-sm md:text-base"
             >
-              <FileText size={18} />
+              <FileText size={16} />
               Resume
             </a>
           </Magnetic>
@@ -167,23 +167,23 @@ export function Hero() {
         {/* Stats Row */}
         <motion.div
           variants={itemVariants}
-          className="grid grid-cols-3 gap-6 pt-10 mt-2 max-w-xl border-t border-border/20"
+          className="grid grid-cols-3 gap-4 md:gap-6 pt-8 mt-2 w-full max-w-xs sm:max-w-sm md:max-w-xl border-t border-border/20"
         >
           <div>
-            <p className="text-3xl md:text-4xl font-extrabold text-accent">1768+</p>
-            <p className="text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent">1768+</p>
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
               Coding Hours
             </p>
           </div>
           <div>
-            <p className="text-3xl md:text-4xl font-extrabold text-accent">17+</p>
-            <p className="text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent">17+</p>
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
               Repositories
             </p>
           </div>
           <div>
-            <p className="text-3xl md:text-4xl font-extrabold text-accent">5+</p>
-            <p className="text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent">5+</p>
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
               Live Projects
             </p>
           </div>

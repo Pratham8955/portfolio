@@ -45,7 +45,7 @@ export function Experience() {
           <DecodedText text="Experience" />
         </h2>
 
-        <div className="relative ml-4 md:ml-8">
+        <div className="relative ml-3 md:ml-8">
           {/* Connecting vertical line (draws down on scroll) */}
           <div className="absolute left-0 top-3 bottom-3 w-[2px] bg-muted/30">
             <motion.div
@@ -58,9 +58,9 @@ export function Experience() {
             />
           </div>
 
-          <div className="space-y-12">
+          <div className="space-y-10 md:space-y-12">
             {experiences.map((exp, idx) => (
-              <div key={idx} className="relative pl-8 md:pl-12">
+              <div key={idx} className="relative pl-7 md:pl-12">
                 {/* Timeline Dot */}
                 <div className="absolute left-0 -translate-x-1/2 top-[28px] z-10">
                   <motion.div
@@ -73,7 +73,7 @@ export function Experience() {
                       stiffness: 300,
                       damping: 15
                     }}
-                    className="w-3.5 h-3.5 rounded-full bg-accent border-2 border-background ring-4 ring-accent/15 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                    className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full bg-accent border-2 border-background ring-4 ring-accent/15 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                   />
                 </div>
 
@@ -83,26 +83,28 @@ export function Experience() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-10%' }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: idx * 0.1 }}
-                  className="subtle-border rounded-xl p-6 md:p-8 bg-card/40 backdrop-blur-sm hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 transition-all duration-300 group"
+                  className="subtle-border rounded-xl p-5 md:p-8 bg-card/40 backdrop-blur-sm hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 transition-all duration-300 group"
                 >
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-6">
-                    <div>
-                      <h3 className="text-xl md:text-2xl font-semibold text-foreground group-hover:text-accent transition-colors">
-                        {exp.role}
-                      </h3>
-                      <p className="text-accent font-medium mt-1">{exp.company}</p>
-                      <p className="text-xs text-muted-foreground group-hover:text-foreground mt-1 transition-colors">{exp.location}</p>
+                  <div className="flex flex-col gap-2 mb-5 md:mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg md:text-2xl font-semibold text-foreground group-hover:text-accent transition-colors leading-snug">
+                          {exp.role}
+                        </h3>
+                        <p className="text-accent font-medium mt-1 text-sm md:text-base">{exp.company}</p>
+                        <p className="text-xs text-muted-foreground group-hover:text-foreground mt-0.5 transition-colors">{exp.location}</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground group-hover:text-foreground whitespace-nowrap font-medium bg-muted/30 px-3 py-1 rounded-full border border-border/20 self-start transition-colors">
+                        {exp.period}
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground group-hover:text-foreground whitespace-nowrap md:mt-1 font-medium bg-muted/30 px-3 py-1 rounded-full border border-border/20 self-start transition-colors">
-                      {exp.period}
-                    </p>
                   </div>
 
                   <ul className="space-y-3">
                     {exp.highlights.map((highlight, i) => (
                       <li key={i} className="flex gap-3 text-muted-foreground group-hover:text-foreground transition-colors">
-                        <span className="text-accent font-bold mt-1.5 text-xs">•</span>
-                        <span className="text-sm md:text-base leading-relaxed">{highlight}</span>
+                        <span className="text-accent font-bold mt-1.5 text-xs shrink-0">•</span>
+                        <span className="text-sm leading-relaxed">{highlight}</span>
                       </li>
                     ))}
                   </ul>

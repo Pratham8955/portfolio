@@ -79,16 +79,16 @@ function ProjectCard({ project, variants }: { project: typeof projects[0], varia
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       style={shouldReduceMotion ? {} : { rotateX, rotateY, transformStyle: 'preserve-3d' }}
-      className="relative subtle-border rounded-xl p-6 md:p-8 bg-card/40 backdrop-blur-sm transition-all duration-300 hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 group cursor-pointer overflow-hidden"
+      className="relative subtle-border rounded-xl p-5 md:p-8 bg-card/40 backdrop-blur-sm transition-all duration-300 hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 group cursor-pointer overflow-hidden"
     >
       <div style={shouldReduceMotion ? {} : { transform: 'translateZ(20px)' }} className="transition-transform duration-200">
         <div className="flex items-start justify-between mb-4">
-          <h3 className="text-xl md:text-2xl font-semibold text-foreground group-hover:text-accent transition-colors">
+          <h3 className="text-lg md:text-2xl font-semibold text-foreground group-hover:text-accent transition-colors leading-snug">
             {project.name}
           </h3>
           <ExternalLink
             size={20}
-            className="text-muted-foreground group-hover:text-accent transition-colors opacity-0 group-hover:opacity-100 duration-200"
+            className="text-muted-foreground group-hover:text-accent transition-colors opacity-0 group-hover:opacity-100 duration-200 shrink-0 ml-2"
           />
         </div>
 
@@ -114,13 +114,13 @@ function ProjectCard({ project, variants }: { project: typeof projects[0], varia
           </div>
         </div>
 
-        {/* Tech Badges Container with slide-up reveal */}
         <div className="flex flex-wrap gap-2 pt-2 min-h-[36px]">
           {project.technologies.map((tech, i) => (
             <motion.span
               key={tech}
               className="tech-badge text-xs"
               animate={isHovered ? { y: 0, opacity: 1 } : { y: 15, opacity: 0 }}
+              initial={{ y: 15, opacity: 0 }}
               transition={shouldReduceMotion ? { duration: 0 } : {
                 delay: isHovered ? i * 0.03 : 0,
                 type: 'spring',

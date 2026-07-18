@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ThemeProvider } from './theme-provider'
+import { SmoothScrollProvider } from '@/components/smooth-scroll-provider'
 
 export const metadata: Metadata = {
   title: 'Pratham Sali | Full-Stack Developer',
@@ -33,6 +34,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   colorScheme: 'dark',
   themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#fbbf24' }],
 }
@@ -46,8 +49,10 @@ export default function RootLayout({
     <html lang="en" className="bg-background">
       <body className="antialiased">
         <ThemeProvider>
-          {children}
-          {process.env.NODE_ENV === 'production' && <Analytics />}
+          <SmoothScrollProvider>
+            {children}
+            {process.env.NODE_ENV === 'production' && <Analytics />}
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>
