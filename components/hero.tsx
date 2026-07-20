@@ -48,7 +48,7 @@ export function Hero() {
 
   return (
     <section
-      className="portfolio-container section-padding flex flex-col justify-center min-h-screen relative overflow-hidden"
+      className="portfolio-container section-padding flex flex-col justify-center min-h-[auto] md:min-h-[min(100vh,850px)] relative overflow-hidden"
       style={{ contentVisibility: 'visible' }}
     >
       <motion.div
