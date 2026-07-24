@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 const projects = [
   {
-    name: 'Maham',
+    name: 'Maham (Live Project)',
     description: 'Live project management and guard task coordination platform',
     technologies: ['Next.js', 'Node.js', 'MongoDB', 'Redis'],
     problem: 'Managing profile update requests, coordinating diverse task types, and scheduling guard assignments across multiple time zones required a reliable and scalable backend system',
@@ -15,11 +15,27 @@ const projects = [
     color: '#3b82f6',
   },
   {
-    name: 'MFTran',
+    name: 'MFTran (Live Project)',
     description: 'Customer query management and handling API backend system',
     technologies: ['Advanced Java', 'REST API', 'Postman'],
     problem: 'Processing customer inquiries required a robust backend to handle concurrent requests and data persistence',
     technicalDecision: 'Built scalable REST APIs with proper error handling and logging for production reliability',
+    color: '#3b82f6',
+  },
+  {
+    name: 'Inventory Management System (Strata)',
+    description: 'Inventory management system tracking item locations via QR code scanning with pay-per-grow pricing',
+    technologies: ['Node.js', 'Express', 'React', 'TypeScript', 'MongoDB'],
+    problem: 'Businesses needed an efficient, scalable way to track item locations without prohibitive upfront software costs',
+    technicalDecision: 'Built around a pay-per-grow pricing approach and implemented QR code scanning for fast, accurate inventory tracking',
+    color: '#3b82f6',
+  },
+  {
+    name: 'Ecommerce (GoWear)',
+    description: 'Full-stack ecommerce platform for selling clothing for kids, men, and women',
+    technologies: ['MongoDB', 'Express', 'React', 'Node.js'],
+    problem: 'A clothing brand required a comprehensive online store with product browsing and transaction capabilities',
+    technicalDecision: 'Used the full MERN stack to deliver a responsive shopping experience and efficient data management',
     color: '#3b82f6',
   },
   {
@@ -40,13 +56,16 @@ const projects = [
   },
 ]
 
-function ProjectCard({ project, variants }: { project: typeof projects[0], variants: any }) {
+function ProjectCard({ project, index }: { project: typeof projects[0], index: number }) {
   const shouldReduceMotion = !!useReducedMotion()
   const [isHovered, setIsHovered] = useState(false)
 
   return (
     <motion.div
-      variants={variants}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.1 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="relative subtle-border rounded-xl p-5 md:p-8 bg-card/80 transition-[border-color,box-shadow,transform] duration-200 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 hover:-translate-y-1 group cursor-pointer overflow-hidden"
@@ -106,24 +125,8 @@ function ProjectCard({ project, variants }: { project: typeof projects[0], varia
 }
 
 export function Projects() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  }
+  const [showAllProjects, setShowAllProjects] = useState(false)
+  const visibleProjects = showAllProjects ? projects : projects.slice(0, 4)
 
   return (
     <section id="projects" className="portfolio-container section-padding">
@@ -137,21 +140,31 @@ export function Projects() {
           Featured Projects
         </h2>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {projects.map((project, idx) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {visibleProjects.map((project, idx) => (
             <ProjectCard
-              key={idx}
+              key={project.name}
               project={project}
-              variants={itemVariants}
+              index={idx}
             />
           ))}
-        </motion.div>
+        </div>
+
+        {projects.length > 4 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-12 flex justify-center"
+          >
+            <button
+              onClick={() => setShowAllProjects(!showAllProjects)}
+              className="px-6 py-3 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-colors duration-300 font-medium text-sm"
+            >
+              {showAllProjects ? 'Show Less' : `View All Projects (${projects.length})`}
+            </button>
+          </motion.div>
+        )}
       </motion.div>
     </section>
   )
