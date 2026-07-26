@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 const projects = [
   {
-    name: 'Maham (Live Project)',
+    name: 'Maham',
     description: 'Live project management and guard task coordination platform',
     technologies: ['Next.js', 'Node.js', 'MongoDB', 'Redis'],
     problem: 'Managing profile update requests, coordinating diverse task types, and scheduling guard assignments across multiple time zones required a reliable and scalable backend system',
@@ -15,7 +15,7 @@ const projects = [
     color: '#3b82f6',
   },
   {
-    name: 'MFTran (Live Project)',
+    name: 'MFTran',
     description: 'Customer query management and handling API backend system',
     technologies: ['Advanced Java', 'REST API', 'Postman'],
     problem: 'Processing customer inquiries required a robust backend to handle concurrent requests and data persistence',
