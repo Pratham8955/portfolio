@@ -3,6 +3,11 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ThemeProvider } from './theme-provider'
 import { SmoothScrollProvider } from '@/components/smooth-scroll-provider'
+import { CommandPalette } from '@/components/command-palette'
+import { KeyboardShortcuts } from '@/components/keyboard-shortcuts'
+import { ScrollProgress } from '@/components/scroll-progress'
+import { GlobalResumePreview } from '@/components/global-resume-preview'
+import { SplashScreen } from '@/components/splash-screen'
 
 export const metadata: Metadata = {
   title: 'Pratham Sali | Full-Stack Developer',
@@ -50,8 +55,15 @@ export default function RootLayout({
       <body className="antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
-            {children}
-            {process.env.NODE_ENV === 'production' && <Analytics />}
+            <ScrollProgress />
+            <KeyboardShortcuts />
+            <CommandPalette />
+            <GlobalResumePreview />
+            
+            <SplashScreen>
+              {children}
+              {process.env.NODE_ENV === 'production' && <Analytics />}
+            </SplashScreen>
           </SmoothScrollProvider>
         </ThemeProvider>
       </body>

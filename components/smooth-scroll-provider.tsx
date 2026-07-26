@@ -21,7 +21,22 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
 
     rafId = requestAnimationFrame(raf)
 
+    // Intercept anchor links for smooth scrolling
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const anchor = target.closest('a')
+      if (!anchor) return
+      
+      const href = anchor.getAttribute('href')
+      if (href?.startsWith('#') && href.length > 1) {
+        e.preventDefault()
+        lenis.scrollTo(href, { offset: -50 }) // Offset for navbar
+      }
+    }
+    document.addEventListener('click', handleAnchorClick)
+
     return () => {
+      document.removeEventListener('click', handleAnchorClick)
       cancelAnimationFrame(rafId)
       lenis.destroy()
     }

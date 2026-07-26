@@ -3,9 +3,11 @@
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ThemeToggle } from './theme-toggle'
 import { useState, useEffect } from 'react'
+import { useAppStore } from '@/lib/store'
 
 export function Navigation() {
   const shouldReduceMotion = !!useReducedMotion()
+  const { resumePreviewOpen, projectModalOpen } = useAppStore()
   const [activeSection, setActiveSection] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
@@ -57,7 +59,7 @@ export function Navigation() {
       <motion.nav
         className="fixed top-5 left-0 right-0 mx-auto z-50 w-fit max-w-[calc(100vw-2rem)] border border-border/40 bg-background/60 backdrop-blur-lg rounded-full shadow-lg px-3 md:px-5 py-1.5 flex items-center gap-4 md:gap-6"
         initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        animate={{ y: (resumePreviewOpen || projectModalOpen) ? -150 : 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         {/* Desktop Navigation */}

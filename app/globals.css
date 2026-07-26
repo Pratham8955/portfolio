@@ -121,16 +121,20 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   /* Hide default cursor — custom cursor takes over (auto-disabled on touch devices) */
   @media (pointer: fine) {
-    *, *::before, *::after {
+
+    body,
+    body *:not(iframe) {
       cursor: none !important;
     }
   }
+
   body {
     @apply bg-background text-foreground relative min-h-screen overflow-x-hidden;
     /* Glowing high-tech grids and gradient lights */
-    background-image: 
+    background-image:
       radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 40%),
       radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 40%),
       linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
@@ -138,6 +142,7 @@
     background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
     background-position: center top;
   }
+
   html {
     /* scroll-smooth is handled by Lenis — no native CSS scroll needed */
   }
@@ -147,31 +152,41 @@
   .portfolio-container {
     @apply max-w-6xl mx-auto px-4 md:px-8;
   }
-  
+
   .section-padding {
     @apply py-16 md:py-24;
     /* Skip rendering for offscreen sections — massive perf win */
     content-visibility: auto;
     contain-intrinsic-size: auto 600px;
   }
-  
+
   .tech-badge {
     @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground transition-colors;
   }
-  
+
   .subtle-border {
     @apply border border-border/50;
   }
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes marquee-reverse {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0%); }
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
 }
 
 .animate-marquee {
