@@ -9,7 +9,7 @@ const projects = [
   {
     name: 'Maham',
     description: 'Live project management and guard task coordination platform',
-    technologies: ['Next.js', 'Node.js', 'MongoDB', 'Redis'],
+    technologies: ['MongoDB', 'Next.js', 'Node.js', 'Redis'],
     problem: 'Managing profile update requests, coordinating diverse task types, and scheduling guard assignments across multiple time zones required a reliable and scalable backend system',
     technicalDecision: 'Used Redis caching to optimize frequent data queries, implemented Cron Jobs for automated time-zone-aware task scheduling, and built a WebSocket-ready backend architecture for real-time updates',
     color: '#3b82f6',
@@ -25,7 +25,7 @@ const projects = [
   {
     name: 'Inventory Management System (Strata)',
     description: 'Inventory management system tracking item locations via QR code scanning with pay-per-grow pricing',
-    technologies: ['Node.js', 'Express', 'React', 'TypeScript', 'MongoDB'],
+    technologies: ['MongoDB', 'Express', 'React', 'Node.js', 'TypeScript'],
     problem: 'Businesses needed an efficient, scalable way to track item locations without prohibitive upfront software costs',
     technicalDecision: 'Built around a pay-per-grow pricing approach and implemented QR code scanning for fast, accurate inventory tracking',
     color: '#3b82f6',
