@@ -11,7 +11,8 @@ import {
   Mail,
   FileText,
   GitBranch,
-  Globe
+  Globe,
+  GraduationCap
 } from 'lucide-react'
 
 export function CommandPalette() {
@@ -76,6 +77,13 @@ export function CommandPalette() {
                 >
                   <Briefcase size={16} />
                   <span>Experience</span>
+                </Command.Item>
+                <Command.Item
+                  onSelect={() => runCommand(() => document.getElementById('education')?.scrollIntoView({ behavior: 'smooth' }))}
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                >
+                  <GraduationCap size={16} />
+                  <span>Education</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' }))}
