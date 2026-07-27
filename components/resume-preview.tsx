@@ -46,6 +46,7 @@ export function ResumePreview({ isOpen, onClose, resumeUrl }: ResumePreviewProps
             exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15, ease: 'easeOut' } }}
             className={`relative flex flex-col bg-card border border-border shadow-2xl z-10 custom-scrollbar ${isOpen && showIframe ? 'overflow-y-auto' : 'overflow-hidden'} ${isFullscreen ? 'w-full h-full' : 'w-full max-w-4xl h-[85dvh] md:h-[85vh]'}`}
             style={{ borderRadius: '1rem' }}
+            data-lenis-prevent="true"
           >
             {/* Header Toolbar */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">

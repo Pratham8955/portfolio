@@ -21,29 +21,12 @@ export function KeyboardShortcuts() {
       // Ignore if typing in an input or textarea
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return
 
+      // Ignore if a modifier key is pressed (e.g. Ctrl+R to reload)
+      if (e.ctrlKey || e.metaKey || e.altKey) return
+
       const key = e.key.toLowerCase()
 
       switch (key) {
-        case 'g':
-          window.open('https://github.com/Pratham8955', '_blank')
-          showToast('Opening GitHub...')
-          break
-        case 'l':
-          window.open('https://www.linkedin.com/in/pratham-sali-7244a4216/', '_blank')
-          showToast('Opening LinkedIn...')
-          break
-        case 'r':
-          setResumePreviewOpen(true)
-          showToast('Opening Resume Preview')
-          break
-        case 'c':
-          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-          showToast('Navigating to Contact')
-          break
-        case 'p':
-          document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })
-          showToast('Navigating to Projects')
-          break
         case '?':
           setCommandPaletteOpen(true)
           showToast('Opening Command Palette')

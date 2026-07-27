@@ -12,7 +12,8 @@ import {
   FileText,
   GitBranch,
   Globe,
-  GraduationCap
+  GraduationCap,
+  User
 } from 'lucide-react'
 
 export function CommandPalette() {
@@ -33,7 +34,10 @@ export function CommandPalette() {
   const runCommand = React.useCallback(
     (command: () => unknown) => {
       setCommandPaletteOpen(false)
-      command()
+      // Small delay ensures the dialog's scroll-lock is removed before scrolling
+      setTimeout(() => {
+        command()
+      }, 150)
     },
     [setCommandPaletteOpen]
   )
@@ -57,19 +61,25 @@ export function CommandPalette() {
               placeholder="Type a command or search..."
               className="w-full border-b border-border bg-transparent px-4 py-4 text-sm outline-none placeholder:text-muted-foreground text-foreground"
             />
-            <Command.List className="max-h-[300px] overflow-y-auto p-2">
+            <Command.List className="max-h-[300px] overflow-y-auto p-2" data-lenis-prevent="true">
               <Command.Empty className="p-4 text-center text-sm text-muted-foreground">
                 No results found.
               </Command.Empty>
 
               <Command.Group heading="Navigation" className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                 <Command.Item
+                  onSelect={() => runCommand(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }))}
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                >
+                  <User size={16} />
+                  <span>About</span>
+                </Command.Item>
+                <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }))}
                   className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
                 >
                   <Code size={16} />
                   <span>Projects</span>
-                  <span className="ml-auto text-xs text-muted-foreground">P</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' }))}
@@ -98,7 +108,6 @@ export function CommandPalette() {
                 >
                   <Mail size={16} />
                   <span>Contact</span>
-                  <span className="ml-auto text-xs text-muted-foreground">C</span>
                 </Command.Item>
               </Command.Group>
 
@@ -109,7 +118,6 @@ export function CommandPalette() {
                 >
                   <GitBranch size={16} />
                   <span>GitHub</span>
-                  <span className="ml-auto text-xs text-muted-foreground">G</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => runCommand(() => window.open('https://www.linkedin.com/in/pratham-sali-7244a4216/', '_blank'))}
@@ -117,7 +125,6 @@ export function CommandPalette() {
                 >
                   <Globe size={16} />
                   <span>LinkedIn</span>
-                  <span className="ml-auto text-xs text-muted-foreground">L</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => runCommand(() => setResumePreviewOpen(true))}
@@ -125,7 +132,6 @@ export function CommandPalette() {
                 >
                   <FileText size={16} />
                   <span>Resume</span>
-                  <span className="ml-auto text-xs text-muted-foreground">R</span>
                 </Command.Item>
               </Command.Group>
 

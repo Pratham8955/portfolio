@@ -4,10 +4,11 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ThemeToggle } from './theme-toggle'
 import { useState, useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
+import { Command as CommandIcon } from 'lucide-react'
 
 export function Navigation() {
   const shouldReduceMotion = !!useReducedMotion()
-  const { resumePreviewOpen, projectModalOpen } = useAppStore()
+  const { resumePreviewOpen, projectModalOpen, setCommandPaletteOpen } = useAppStore()
   const [activeSection, setActiveSection] = useState('')
   const [isOpen, setIsOpen] = useState(false)
 
@@ -44,9 +45,13 @@ export function Navigation() {
     const handleScroll = () => {
       if (window.scrollY < 100) {
         setActiveSection('')
+      } else if (Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 50) {
+        setActiveSection('contact')
       }
     }
     window.addEventListener('scroll', handleScroll)
+    // Run on initial load to handle page refresh
+    handleScroll()
 
     return () => {
       observer.disconnect()
@@ -90,6 +95,14 @@ export function Navigation() {
         </div>
 
         <div className="flex items-center gap-2 pr-1">
+          <motion.button
+            onClick={() => setCommandPaletteOpen(true)}
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-full border border-border/50 hover:bg-muted/50 transition-colors"
+            title="Open Command Palette (Ctrl+K or ?)"
+          >
+            <CommandIcon size={14} />
+            <span>Cmd + K</span>
+          </motion.button>
           <ThemeToggle />
 
           {/* Mobile Menu Trigger */}
