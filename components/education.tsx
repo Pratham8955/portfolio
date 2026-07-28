@@ -11,7 +11,7 @@ const educationList = [
     period: 'Aug 2024 – Jul 2026',
     location: 'Surat, Gujarat',
     highlights: [
-      'Graduated with a CGPA of 7.77.',
+      'Completed Postgraduation with a CGPA of 7.77.',
       'Focused on advanced software engineering, system architecture, and modern web technologies.'
     ],
   },
