@@ -20,7 +20,7 @@ const experiences = [
     impact: 'Improved API response times by 30% through Redis caching.'
   },
   {
-    role: 'Java Backend Trainee',
+    role: 'Java Backend Intern',
     company: 'Finlogic Technologies India Pvt. Ltd.',
     period: 'June 2023 – June 2024',
     location: 'Surat, Gujarat',
