@@ -73,7 +73,7 @@ function SkillCard({ skill, shouldReduceMotion }: { skill: typeof allSkills[0], 
           `,
         }}
       />
-      
+
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2.5 rounded-lg bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300 shadow-inner">
@@ -99,7 +99,7 @@ function SkillCard({ skill, shouldReduceMotion }: { skill: typeof allSkills[0], 
             <span className="font-medium text-foreground text-right truncate max-w-[120px]">{skill.projects}</span>
           </div>
         </div>
-        
+
         <div className="mt-4 pt-3 border-t border-border/50">
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Strength:</span> {skill.strength}
@@ -142,10 +142,18 @@ const competencies = [
 export function Skills() {
   const shouldReduceMotion = !!useReducedMotion()
   const [activeCategory, setActiveCategory] = useState('All')
+  const [showAll, setShowAll] = useState(false)
 
-  const filteredSkills = allSkills.filter(skill => 
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat)
+    setShowAll(false)
+  }
+
+  const filteredSkills = allSkills.filter(skill =>
     activeCategory === 'All' ? true : skill.category === activeCategory
   )
+
+  const displayedSkills = showAll ? filteredSkills : filteredSkills.slice(0, 8)
 
   return (
     <section id="skills" className="portfolio-container section-padding">
@@ -165,18 +173,18 @@ export function Skills() {
               A comprehensive breakdown of my technical arsenal and proficiencies.
             </p>
           </div>
-          
+
           {/* Category Filter */}
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeCategory === cat 
-                    ? 'bg-accent text-accent-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
+                    ? 'bg-accent text-accent-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)]'
                     : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -189,10 +197,21 @@ export function Skills() {
           layout
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
-          {filteredSkills.map((skill) => (
+          {displayedSkills.map((skill) => (
             <SkillCard key={skill.name} skill={skill} shouldReduceMotion={shouldReduceMotion} />
           ))}
         </motion.div>
+
+        {filteredSkills.length > 8 && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="px-6 py-2.5 rounded-full border border-border/50 bg-card/60 hover:bg-accent hover:text-accent-foreground transition-colors font-medium text-sm flex items-center gap-2 shadow-sm"
+            >
+              {showAll ? 'Show Less' : 'Show More'}
+            </button>
+          </div>
+        )}
 
         {/* Competencies Progress Bars */}
         <div className="pt-16 mt-8 border-t border-border/30">
