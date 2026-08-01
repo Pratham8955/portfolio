@@ -129,7 +129,7 @@ export function Hero() {
       />
 
       <motion.div
-        className="space-y-8 relative z-10"
+        className="space-y-8 relative z-10 pb-24 md:pb-0"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
