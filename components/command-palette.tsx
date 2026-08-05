@@ -13,7 +13,8 @@ import {
   GitBranch,
   Globe,
   GraduationCap,
-  User
+  User,
+  X
 } from 'lucide-react'
 
 export function CommandPalette() {
@@ -57,10 +58,19 @@ export function CommandPalette() {
             transition={{ duration: 0.2 }}
             className="w-full max-w-xl overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
           >
-            <Command.Input
-              placeholder="Type a command or search..."
-              className="w-full border-b border-border bg-transparent px-4 py-4 text-sm outline-none placeholder:text-muted-foreground text-foreground"
-            />
+            <div className="flex items-center border-b border-border px-4">
+              <Command.Input
+                placeholder="Type a command or search..."
+                className="flex w-full bg-transparent py-4 text-sm outline-none placeholder:text-muted-foreground text-foreground"
+              />
+              <button
+                onClick={() => setCommandPaletteOpen(false)}
+                className="ml-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
+              >
+                <X size={18} />
+                <span className="sr-only">Close</span>
+              </button>
+            </div>
             <Command.List className="max-h-[300px] overflow-y-auto p-2" data-lenis-prevent="true">
               <Command.Empty className="p-4 text-center text-sm text-muted-foreground">
                 No results found.
