@@ -35,7 +35,7 @@ const projects = [
     dbSchema: 'Relational mapping with MySQL for structured query tracking.',
     apiFlow: 'Standard synchronous REST API endpoints.',
     challenges: 'Ensuring thread safety and connection pooling for database operations.',
-    lessons: 'Mastered Java Concurrency and standard JDBC operations.'
+    lessons: 'Gained practical experience with Java Concurrency and standard JDBC operations.'
   },
   {
     name: 'Inventory Management System (Strata)',

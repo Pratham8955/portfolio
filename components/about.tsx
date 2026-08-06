@@ -53,14 +53,15 @@ function AboutCard({ children, title, icon: Icon, delay = 0 }: { children: React
 
 export function About() {
   const techStacks = [
+    { label: 'Java', category: 'language' },
+    { label: 'Spring Boot', category: 'backend' },
+    { label: 'MySQL', category: 'database' },
     { label: 'Node.js', category: 'backend' },
     { label: 'TypeScript', category: 'language' },
-    { label: 'MongoDB', category: 'database' },
     { label: 'Redis', category: 'database' },
+    { label: 'MongoDB', category: 'database' },
     { label: 'Next.js', category: 'frontend' },
     { label: 'React', category: 'frontend' },
-    { label: 'Java', category: 'language' },
-    { label: 'C#', category: 'language' },
   ]
 
   const containerVariants = {

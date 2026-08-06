@@ -9,7 +9,6 @@ import { useAppStore } from '@/lib/store'
 const roles = [
   'Full-Stack Developer',
   'Software Engineer',
-  'Backend Architect',
   'Java Developer',
   'Node.js Developer',
   '.NET Developer',
@@ -84,7 +83,7 @@ export function Hero() {
     },
   }
 
-  const tagline = "Building scalable web applications with a strong backend foundation. Specializing in Node.js, TypeScript, and modern full-stack technologies."
+  const tagline = "Building scalable backend systems and robust REST APIs. Specializing in Java, Spring Boot, and modern web architectures."
 
   return (
     <section
@@ -203,9 +202,9 @@ export function Hero() {
               layoutId="resume-modal"
               onClick={() => setResumePreviewOpen(true)}
               className={`group relative flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-accent px-6 py-3 font-semibold text-accent-foreground shadow-lg hover:shadow-accent/25 ${resumePreviewOpen ? 'transition-none pointer-events-none' : ''}`}
-              style={{ 
+              style={{
                 opacity: resumePreviewOpen ? 0 : 1,
-                borderRadius: '0.5rem' 
+                borderRadius: '0.5rem'
               }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -216,6 +215,10 @@ export function Hero() {
           </Magnetic>
         </motion.div>
 
+        <motion.div variants={itemVariants} className="text-sm text-muted-foreground pt-2">
+          Or email me directly at: <a href="mailto:prathamsali123@gmail.com" className="text-accent hover:underline font-medium">prathamsali123@gmail.com</a>
+        </motion.div>
+
         {/* Stats Row */}
         <motion.div
           variants={itemVariants}
@@ -223,9 +226,9 @@ export function Hero() {
           style={{ willChange: 'transform, opacity' }}
         >
           <div className="group">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent group-hover:scale-105 transition-transform origin-left">1768+</p>
+            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent group-hover:scale-105 transition-transform origin-left">50+</p>
             <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
-              Coding Hours
+              APIs Built
             </p>
           </div>
           <div className="group">

@@ -19,21 +19,21 @@ import {
 
 // Enhanced Skills Data
 const allSkills = [
-  { name: 'Java', icon: Code2, category: 'Languages', yoe: '2+ years', usedIn: 'Finlogic Tech', projects: 'MFTran, HRMS', strength: 'Enterprise Backend' },
-  { name: 'JavaScript', icon: Terminal, category: 'Languages', yoe: '3+ years', usedIn: 'Elaunch Solutions', projects: 'Maham, Ecommerce', strength: 'Full-Stack Logic' },
-  { name: 'TypeScript', icon: Terminal, category: 'Languages', yoe: '1.5+ years', usedIn: 'Elaunch Solutions', projects: 'Inventory System', strength: 'Type-Safe Frontend' },
-  { name: 'Next.js', icon: Layers, category: 'Frontend', yoe: '1.5+ years', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'SSR & Routing' },
-  { name: 'React', icon: Layers, category: 'Frontend', yoe: '2+ years', usedIn: 'Academic Projects', projects: 'CampusWave', strength: 'UI Components' },
-  { name: 'Node.js', icon: Cpu, category: 'Backend', yoe: '2+ years', usedIn: 'Elaunch Solutions', projects: 'Maham, Ecommerce', strength: 'Scalable APIs' },
-  { name: 'Express.js', icon: Server, category: 'Backend', yoe: '2+ years', usedIn: 'Personal Projects', projects: 'Inventory System', strength: 'REST APIs' },
-  { name: 'Spring Boot', icon: Server, category: 'Backend', yoe: '1+ years', usedIn: 'Finlogic Tech', projects: 'HRMS', strength: 'Microservices' },
-  { name: '.NET Core', icon: CpuIcon, category: 'Backend', yoe: '1+ years', usedIn: 'Academic Projects', projects: 'CampusWave', strength: 'Enterprise Auth' },
-  { name: 'MongoDB', icon: Database, category: 'Database', yoe: '2+ years', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'NoSQL Data Modeling' },
-  { name: 'MySQL', icon: Database, category: 'Database', yoe: '3+ years', usedIn: 'Finlogic Tech', projects: 'HRMS', strength: 'Relational Design' },
-  { name: 'Redis', icon: Flame, category: 'Database', yoe: '1+ years', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'Caching & WebSockets' },
-  { name: 'Docker', icon: Layers, category: 'DevOps', yoe: '<1 year', usedIn: 'Learning', projects: 'Personal', strength: 'Containerization' },
-  { name: 'Git & GitHub', icon: GitBranch, category: 'DevOps', yoe: '3+ years', usedIn: 'All Roles', projects: 'All Projects', strength: 'Version Control' },
-  { name: 'Postman', icon: Workflow, category: 'DevOps', yoe: '2+ years', usedIn: 'Finlogic & Elaunch', projects: 'API Testing', strength: 'Endpoint Validation' },
+  { name: 'Java', icon: Code2, category: 'Languages', yoe: 'Proficient', usedIn: 'Finlogic Tech', projects: 'MFTran, HRMS', strength: 'Enterprise Backend' },
+  { name: 'JavaScript', icon: Terminal, category: 'Languages', yoe: 'Advanced', usedIn: 'Elaunch Solutions', projects: 'Maham, Ecommerce', strength: 'Full-Stack Logic' },
+  { name: 'TypeScript', icon: Terminal, category: 'Languages', yoe: 'Intermediate', usedIn: 'Elaunch Solutions', projects: 'Inventory System', strength: 'Type-Safe Frontend' },
+  { name: 'Next.js', icon: Layers, category: 'Frontend', yoe: 'Intermediate', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'SSR & Routing' },
+  { name: 'React', icon: Layers, category: 'Frontend', yoe: 'Proficient', usedIn: 'Academic Projects', projects: 'CampusWave', strength: 'UI Components' },
+  { name: 'Node.js', icon: Cpu, category: 'Backend', yoe: 'Proficient', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'Scalable APIs' },
+  { name: 'Express.js', icon: Server, category: 'Backend', yoe: 'Proficient', usedIn: 'Personal Projects', projects: 'Inventory System', strength: 'REST APIs' },
+  { name: 'Spring Boot', icon: Server, category: 'Backend', yoe: 'Intermediate', usedIn: 'Finlogic Tech', projects: 'HRMS', strength: 'Microservices' },
+  { name: '.NET Core', icon: CpuIcon, category: 'Backend', yoe: 'Intermediate', usedIn: 'Academic Projects', projects: 'CampusWave', strength: 'Enterprise Auth' },
+  { name: 'MongoDB', icon: Database, category: 'Database', yoe: 'Proficient', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'NoSQL Data Modeling' },
+  { name: 'MySQL', icon: Database, category: 'Database', yoe: 'Advanced', usedIn: 'Finlogic Tech', projects: 'HRMS', strength: 'Relational Design' },
+  { name: 'Redis', icon: Flame, category: 'Database', yoe: 'Intermediate', usedIn: 'Elaunch Solutions', projects: 'Maham', strength: 'Caching & WebSockets' },
+  { name: 'Docker', icon: Layers, category: 'DevOps', yoe: 'Familiar', usedIn: 'Learning', projects: 'Personal', strength: 'Containerization' },
+  { name: 'Git & GitHub', icon: GitBranch, category: 'DevOps', yoe: 'Advanced', usedIn: 'All Roles', projects: 'All Projects', strength: 'Version Control' },
+  { name: 'Postman', icon: Workflow, category: 'DevOps', yoe: 'Proficient', usedIn: 'Finlogic & Elaunch', projects: 'API Testing', strength: 'Endpoint Validation' },
 ]
 
 const categories = ['All', 'Frontend', 'Backend', 'Database', 'DevOps', 'Languages']
@@ -87,7 +87,7 @@ function SkillCard({ skill, shouldReduceMotion }: { skill: typeof allSkills[0], 
 
         <div className="space-y-2 mt-2 flex-1">
           <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">Experience</span>
+            <span className="text-muted-foreground">Proficiency</span>
             <span className="font-medium text-foreground">{skill.yoe}</span>
           </div>
           <div className="flex justify-between items-center text-sm">
