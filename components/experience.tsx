@@ -6,7 +6,7 @@ import { Building2, ChevronDown, CheckCircle2 } from 'lucide-react'
 
 const experiences = [
   {
-    role: 'Full-Stack Intern',
+    role: 'Full-Stack Developer',
     company: 'Elaunch Solutions Pvt. Ltd.',
     period: 'January 2026 – July 2025',
     location: 'Surat, Gujarat',
@@ -20,8 +20,8 @@ const experiences = [
     impact: 'Improved API response times by 30% through Redis caching.'
   },
   {
-    role: 'Java Backend Intern',
-    company: 'Finlogic Technologies India Pvt. Ltd.',
+    role: 'Java Backend Developer',
+    company: 'NJ India Pvt. Ltd.',
     period: 'June 2023 – June 2024',
     location: 'Surat, Gujarat',
     highlights: [

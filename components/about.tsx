@@ -101,7 +101,7 @@ export function About() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           <div className="lg:col-span-7 space-y-6">
             <AboutCard title="Background" icon={GraduationCap} delay={0.1}>
-              Web developer with hands-on full-stack experience gained through a traineeship at Finlogic Technologies and an internship at Elaunch Solutions. Having completed my MSc in ICT, I focus on building production-grade applications with modern web technologies.
+              Web developer with hands-on full-stack experience gained at NJ India Pvt. Ltd. and Elaunch Solutions. Having completed my MSc in ICT, I focus on building production-grade applications with modern web technologies.
             </AboutCard>
 
             <AboutCard title="Approach" icon={Rocket} delay={0.2}>
