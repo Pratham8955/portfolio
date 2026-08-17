@@ -8,7 +8,7 @@ const experiences = [
   {
     role: 'Full-Stack Developer',
     company: 'Elaunch Solutions Pvt. Ltd.',
-    period: 'January 2026 – July 2025',
+    period: 'January 2026 – July 2026',
     location: 'Surat, Gujarat',
     highlights: [
       'Built full-stack features on live projects with Next.js frontend and Node.js backend',
