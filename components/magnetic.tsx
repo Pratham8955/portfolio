@@ -1,38 +1,50 @@
 'use client'
 
-import { motion, useReducedMotion, useSpring } from 'framer-motion'
-import { useRef } from 'react'
+import React, { useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 
-export function Magnetic({ children }: { children: React.ReactNode }) {
+interface MagneticProps {
+  children: React.ReactNode
+  strength?: number
+  className?: string
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
+}
+
+export function Magnetic({
+  children,
+  strength = 0.35,
+  className = '',
+  onMouseEnter,
+  onMouseLeave,
+}: MagneticProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
   const shouldReduceMotion = useReducedMotion()
 
-  const springConfig = { stiffness: 180, damping: 18, mass: 0.1 }
-  const x = useSpring(0, springConfig)
-  const y = useSpring(0, springConfig)
-
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (shouldReduceMotion || !ref.current) return
-    const { left, top, width, height } = ref.current.getBoundingClientRect()
-    x.set((e.clientX - (left + width / 2)) * 0.3)
-    y.set((e.clientY - (top + height / 2)) * 0.3)
+    const { clientX, clientY } = e
+    const { height, width, left, top } = ref.current.getBoundingClientRect()
+    const middleX = clientX - (left + width / 2)
+    const middleY = clientY - (top + height / 2)
+    setPosition({ x: middleX * strength, y: middleY * strength })
   }
 
-  const handleMouseLeave = () => {
-    x.set(0)
-    y.set(0)
-  }
-
-  if (shouldReduceMotion) {
-    return <div ref={ref}>{children}</div>
+  const reset = () => {
+    setPosition({ x: 0, y: 0 })
+    if (onMouseLeave) onMouseLeave()
   }
 
   return (
     <motion.div
       ref={ref}
+      className={`inline-block ${className}`}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x, y }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: 'spring', stiffness: 350, damping: 20, mass: 0.5 }}
     >
       {children}
     </motion.div>

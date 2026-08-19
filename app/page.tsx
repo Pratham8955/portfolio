@@ -1,29 +1,33 @@
-import { Navigation } from '@/components/nav'
-import { Hero } from '@/components/hero'
-import { InteractiveCanvas } from '@/components/interactive-canvas'
 import { CustomCursor } from '@/components/custom-cursor'
+import { Navigation } from '@/components/nav'
+import { FullscreenMenu } from '@/components/fullscreen-menu'
+import { Hero } from '@/components/hero'
 import { About } from '@/components/about'
 import { Experience } from '@/components/experience'
 import { Education } from '@/components/education'
 import { Projects } from '@/components/projects'
-import { Skills } from '@/components/skills'
+import { HowIBuild } from '@/components/how-i-build'
+import { Stack } from '@/components/stack'
 import { Contact } from '@/components/contact'
+import { Footer } from '@/components/footer'
 
 export default function Home() {
   return (
     <>
       <CustomCursor />
-      <InteractiveCanvas />
       <Navigation />
-      <main className="pt-16">
+      <FullscreenMenu />
+      <main className="relative z-10">
         <Hero />
         <About />
         <Experience />
         <Education />
         <Projects />
-        <Skills />
+        <HowIBuild />
+        <Stack />
         <Contact />
       </main>
+      <Footer />
     </>
   )
 }

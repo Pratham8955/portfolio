@@ -1,214 +1,184 @@
 'use client'
 
-import { motion, useReducedMotion, useMotionTemplate, useMotionValue, AnimatePresence } from 'framer-motion'
-import { useState, MouseEvent } from 'react'
-import { Building2, ChevronDown, CheckCircle2 } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { Building2, ChevronDown, CheckCircle2, Calendar, MapPin, Sparkles, ShieldCheck } from 'lucide-react'
+import { PORTFOLIO_DATA, ExperienceItem } from '@/data/portfolio'
+import { useAppStore } from '@/lib/store'
+import { SpotlightCard } from './spotlight-card'
 
-const experiences = [
-  {
-    role: 'Full-Stack Developer',
-    company: 'Elaunch Solutions Pvt. Ltd.',
-    period: 'January 2026 – July 2026',
-    location: 'Surat, Gujarat',
-    highlights: [
-      'Built full-stack features on live projects with Next.js frontend and Node.js backend',
-      'Designed and delivered REST APIs for core application features including profile and task management',
-      'Validated API functionality through manual testing, identifying and resolving bugs early',
-      'Optimized application performance using MongoDB and Redis for data storage and caching',
-    ],
-    techStack: ['Next.js', 'Node.js', 'MongoDB', 'Redis', 'REST API'],
-    impact: 'Improved API response times by 30% through Redis caching.'
-  },
-  {
-    role: 'Java Backend Developer',
-    company: 'NJ India Pvt. Ltd.',
-    period: 'June 2023 – June 2024',
-    location: 'Surat, Gujarat',
-    highlights: [
-      'Completed hands-on training in Java-based backend development through STEP traineeship',
-      'Developed backend APIs using Advanced Java for handling customer queries and requests',
-      'Tested applications using Postman and gained exposure to real-world development practices',
-      'Collaborated with senior developers to understand coding standards and best practices',
-    ],
-    techStack: ['Advanced Java', 'MySQL', 'Postman', 'Spring Boot'],
-    impact: 'Streamlined customer query handling process reducing resolution time.'
-  },
-]
+export function Experience() {
+  const shouldReduceMotion = useReducedMotion()
+  const { setCursor, resetCursor } = useAppStore()
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
-function ExperienceCard({ exp, idx, shouldReduceMotion }: { exp: typeof experiences[0], idx: number, shouldReduceMotion: boolean }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
+  const experiences = PORTFOLIO_DATA.experience
 
-  function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
-    if (shouldReduceMotion) return
-    const { left, top } = currentTarget.getBoundingClientRect()
-    mouseX.set(clientX - left)
-    mouseY.set(clientY - top)
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id)
   }
 
   return (
-    <div className="relative pl-7 md:pl-12 group/timeline">
-      {/* Timeline Dot */}
-      <div className="absolute left-0 -translate-x-1/2 top-[40px] md:top-[46px] z-10">
-        <motion.div
-          initial={{ scale: 0 }}
-          whileInView={{ scale: 1 }}
-          viewport={{ once: true }}
-          transition={shouldReduceMotion ? { duration: 0 } : {
-            delay: idx * 0.15 + 0.2,
-            type: 'spring',
-            stiffness: 300,
-            damping: 15
-          }}
-          className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-accent border-4 border-background shadow-[0_0_15px_rgba(59,130,246,0.6)] group-hover/timeline:scale-125 transition-transform duration-300"
-        />
-      </div>
+    <section id="experience" className="relative w-full py-28 px-4 sm:px-8 md:px-12 lg:px-16 bg-[#050505] overflow-hidden border-t border-white/[0.08]">
+      {/* Background ambient lighting */}
+      <div className="pointer-events-none absolute top-1/2 left-0 w-[500px] h-[500px] rounded-full bg-blue-600/5 blur-[160px] -z-10" />
 
-      {/* Timeline Card */}
-      <motion.div
-        initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: '-10%' }}
-        transition={{ duration: 0.6, ease: 'easeOut', delay: idx * 0.1 }}
-        onMouseMove={handleMouseMove}
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="subtle-border rounded-xl p-6 md:p-8 bg-card/80 transition-colors transition-shadow duration-300 group relative overflow-hidden cursor-pointer hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/10 transform-gpu will-change-transform"
-        style={{ transformStyle: 'preserve-3d' }}
-        whileHover={shouldReduceMotion ? {} : { y: -4, rotateX: 1, rotateY: -1 }}
-      >
-        <motion.div
-          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100 hidden md:block transform-gpu"
-          style={{
-            background: useMotionTemplate`
-              radial-gradient(
-                400px circle at ${mouseX}px ${mouseY}px,
-                rgba(59, 130, 246, 0.08),
-                transparent 80%
-              )
-            `,
-          }}
-        />
-
-        <div className="relative z-10">
-          <div className="flex flex-col gap-4 mb-2">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-muted/80 text-muted-foreground group-hover:bg-accent/10 group-hover:text-accent transition-colors duration-300 shadow-inner">
-                  <Building2 size={24} className="group-hover:animate-pulse" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-accent transition-colors leading-snug">
-                    {exp.role}
-                  </h3>
-                  <p className="text-accent font-medium mt-1 text-base">{exp.company}</p>
-                  <p className="text-sm text-muted-foreground group-hover:text-foreground mt-0.5 transition-colors">{exp.location}</p>
-                </div>
-              </div>
-              <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-4 sm:gap-2 w-full sm:w-auto mt-4 sm:mt-0 border-t sm:border-t-0 border-border/30 pt-4 sm:pt-0">
-                <p className="text-xs text-muted-foreground group-hover:text-foreground whitespace-nowrap font-medium bg-muted/50 px-3 py-1.5 rounded-full border border-border/20 transition-colors">
-                  {exp.period}
-                </p>
-                <motion.div
-                  animate={{ rotate: isExpanded ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="p-1.5 bg-muted/30 rounded-full text-muted-foreground group-hover:text-accent group-hover:bg-accent/10 transition-colors flex-shrink-0"
-                >
-                  <ChevronDown size={16} />
-                </motion.div>
-              </div>
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-white/10 pb-8">
+          <div>
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-blue-400 font-semibold mb-3">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <span>CAREER JOURNEY</span>
             </div>
+            <h2 className="font-black text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter text-white">
+              EXPERIENCE.
+            </h2>
           </div>
+          <p className="text-slate-400 text-sm sm:text-base max-w-md font-sans leading-relaxed">
+            Professional track record engineering production software and enterprise backend systems.
+          </p>
+        </div>
 
-          <AnimatePresence>
-            {isExpanded && (
+        {/* Vertical Timeline Rail */}
+        <div className="relative pl-6 sm:pl-10 md:pl-14 space-y-12">
+          {/* Vertical Illuminated Line */}
+          <div className="absolute left-2.5 sm:left-4 top-4 bottom-4 w-[2px] bg-gradient-to-b from-blue-500 via-indigo-500 to-purple-500 opacity-30" />
+
+          {experiences.map((exp, idx) => {
+            const isExpanded = expandedId === exp.id
+
+            return (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className="overflow-hidden"
-                style={{ willChange: "height, opacity" }}
+                key={exp.id}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.15 }}
+                className="relative group"
               >
-                <div className="pt-10 border-t border-border/30 space-y-6">
-                  <div>
-                    <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <CheckCircle2 size={16} className="text-accent" />
-                      Key Responsibilities & Achievements
-                    </h4>
-                    <ul className="space-y-3">
-                      {exp.highlights.map((highlight, i) => (
-                        <li key={i} className="flex gap-3 text-muted-foreground group-hover:text-foreground/90 transition-colors">
-                          <span className="text-accent font-bold mt-1.5 text-[10px] shrink-0">✦</span>
-                          <span className="text-sm leading-relaxed">{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Timeline Pulsing Node */}
+                <div className="absolute -left-[30px] sm:-left-[42px] top-6 w-5 h-5 rounded-full bg-[#050505] border-2 border-blue-400 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.6)] z-10">
+                  <div className="w-2 h-2 rounded-full bg-blue-400" />
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Experience Card */}
+                <div
+                  onClick={() => toggleExpand(exp.id)}
+                  onMouseEnter={() => setCursor('button', isExpanded ? 'COLLAPSE' : 'EXPAND')}
+                  onMouseLeave={resetCursor}
+                  className="cursor-pointer"
+                >
+                  <SpotlightCard
+                    borderRadius="rounded-3xl"
+                    spotlightColor="rgba(59, 130, 246, 0.18)"
+                    className={`border transition-all duration-300 p-6 sm:p-8 ${
+                      isExpanded
+                        ? 'bg-[#0b0e1d] border-blue-500/50 shadow-[0_0_35px_rgba(59,130,246,0.15)]'
+                        : 'bg-[#080911]/80 hover:bg-[#0c0f1e] border-white/[0.08] hover:border-white/20'
+                    }`}
+                  >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-2">Tech Stack</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {exp.techStack.map(tech => (
-                          <span key={tech} className="px-2.5 py-1 text-xs font-medium rounded-md bg-muted/50 border border-border/30 text-muted-foreground">
-                            {tech}
-                          </span>
-                        ))}
+                      <span className="font-mono text-xs text-blue-400 font-bold uppercase tracking-wider block mb-1">
+                        {exp.company}
+                      </span>
+                      <h3 className="font-black text-2xl sm:text-3xl text-white uppercase tracking-tight">
+                        {exp.role}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400 mt-2">
+                        <span className="flex items-center gap-1">
+                          <Calendar size={13} className="text-slate-500" />
+                          {exp.period}
+                        </span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <MapPin size={13} className="text-slate-500" />
+                          {exp.location}
+                        </span>
                       </div>
                     </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-2">Key Impact</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {exp.impact}
-                      </p>
+
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-full bg-white/5 text-slate-400 group-hover:text-white transition-colors">
+                        <ChevronDown
+                          size={18}
+                          className={`transition-transform duration-300 ${
+                            isExpanded ? 'rotate-180 text-blue-400' : ''
+                          }`}
+                        />
+                      </div>
                     </div>
                   </div>
+
+                  {/* Summary */}
+                  <p className="text-sm sm:text-base text-slate-300 font-sans leading-relaxed mt-4">
+                    {exp.description}
+                  </p>
+
+                  {/* Expandable Deep-Dive */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.35 }}
+                        className="overflow-hidden pt-6 mt-6 border-t border-white/10 space-y-6"
+                      >
+                        <div>
+                          <h4 className="font-mono text-xs uppercase tracking-widest text-slate-400 font-bold mb-3">
+                            RESPONSIBILITIES & CONTRIBUTIONS:
+                          </h4>
+                          <ul className="space-y-2.5">
+                            {exp.highlights.map((item, i) => (
+                              <li
+                                key={i}
+                                className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300 font-sans leading-relaxed"
+                              >
+                                <CheckCircle2 size={15} className="text-blue-400 shrink-0 mt-0.5" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/[0.06]">
+                          <div>
+                            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 block mb-2 font-bold">
+                              TECH STACK:
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {exp.techStack.map((tech) => (
+                                <span
+                                  key={tech}
+                                  className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-xs text-slate-300"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <span className="font-mono text-[11px] uppercase tracking-wider text-emerald-400 block mb-1 font-bold">
+                              KEY BUSINESS IMPACT:
+                            </span>
+                            <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
+                              {exp.impact}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  </SpotlightCard>
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
+            )
+          })}
         </div>
-      </motion.div>
-    </div>
-  )
-}
-
-export function Experience() {
-  const shouldReduceMotion = !!useReducedMotion()
-
-  return (
-    <section id="experience" className="portfolio-container section-padding">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-16">
-          Experience
-        </h2>
-
-        <div className="relative ml-3 md:ml-8">
-          {/* Connecting vertical line (draws down on scroll) */}
-          <div className="absolute left-0 -translate-x-1/2 top-3 bottom-3 w-[2px] bg-muted/30 rounded-full overflow-hidden transform-gpu will-change-transform">
-            <motion.div
-              className="absolute top-0 left-0 w-full bg-gradient-to-b from-accent to-indigo-500 origin-top transform-gpu"
-              initial={{ scaleY: 0 }}
-              whileInView={{ scaleY: 1 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={shouldReduceMotion ? { duration: 0 } : { duration: 1.5, ease: 'easeInOut' }}
-              style={{ height: '100%', originY: 0 }}
-            />
-          </div>
-
-          <div className="space-y-10 md:space-y-12">
-            {experiences.map((exp, idx) => (
-              <ExperienceCard key={idx} exp={exp} idx={idx} shouldReduceMotion={shouldReduceMotion} />
-            ))}
-          </div>
-        </div>
-      </motion.div>
+      </div>
     </section>
   )
 }

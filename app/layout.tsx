@@ -8,16 +8,25 @@ import { KeyboardShortcuts } from '@/components/keyboard-shortcuts'
 import { ScrollProgress } from '@/components/scroll-progress'
 import { GlobalResumePreview } from '@/components/global-resume-preview'
 import { SplashScreen } from '@/components/splash-screen'
+import { PORTFOLIO_DATA } from '@/data/portfolio'
 
 export const metadata: Metadata = {
-  title: 'Pratham Sali | Full-Stack Developer',
-  description: 'Full-stack developer with a backend focus. Specializing in Node.js, TypeScript, MongoDB, and modern web technologies.',
-  keywords: 'full-stack developer, backend developer, React, Next.js, Node.js, TypeScript',
-  authors: [{ name: 'Pratham Sali' }],
+  title: 'Pratham Sali — Software Developer',
+  description: 'Full-stack software developer with a backend focus. Engineering resilient REST APIs, microservices, and modern web architectures.',
+  keywords: 'Pratham Sali, Full-Stack Developer, Backend Engineer, Java, Spring Boot, Node.js, Next.js, TypeScript, MongoDB, Redis, Surat',
+  authors: [{ name: 'Pratham Sali', url: 'https://github.com/Pratham8955' }],
+  creator: 'Pratham Sali',
   openGraph: {
-    title: 'Pratham Sali | Full-Stack Developer',
-    description: 'Full-stack developer with a backend focus.',
+    title: 'Pratham Sali — Software Developer',
+    description: 'Full-stack software developer with a backend focus. Engineering resilient REST APIs, microservices, and modern web architectures.',
     type: 'website',
+    url: 'https://portfolio-k69w.vercel.app/',
+    siteName: 'Pratham Sali Portfolio',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pratham Sali — Software Developer',
+    description: 'Full-stack software developer with a backend focus.',
   },
   icons: {
     icon: [
@@ -42,7 +51,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   colorScheme: 'dark',
-  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#fbbf24' }],
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#050505' }],
 }
 
 export default function RootLayout({
@@ -51,15 +60,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
-      <body className="antialiased">
+    <html lang="en" className="bg-[#050505] text-white">
+      <body className="antialiased selection:bg-blue-500/30 selection:text-white bg-[#050505]">
         <ThemeProvider>
           <SmoothScrollProvider>
             <ScrollProgress />
             <KeyboardShortcuts />
             <CommandPalette />
             <GlobalResumePreview />
-            
+
             <SplashScreen>
               {children}
               {process.env.NODE_ENV === 'production' && <Analytics />}

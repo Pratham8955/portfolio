@@ -1,263 +1,212 @@
 'use client'
 
-import { motion, useReducedMotion, Variants, AnimatePresence, useMotionTemplate, useMotionValue } from 'framer-motion'
-import { Code, Briefcase, Mail, FileText, CheckCircle2 } from 'lucide-react'
-import { useState, useEffect, MouseEvent } from 'react'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { ArrowRight, FileText } from 'lucide-react'
+import { PORTFOLIO_DATA } from '@/data/portfolio'
+import { SystemSculpture } from './system-sculpture'
 import { Magnetic } from './magnetic'
 import { useAppStore } from '@/lib/store'
 
-const roles = [
-  'Full-Stack Developer',
-  'Software Engineer',
-  'Java Developer',
-  'Node.js Developer',
-  '.NET Developer',
+const ROTATING_TITLES = [
+  'FULL-STACK SOFTWARE DEVELOPER',
+  'BACKEND ENGINEER',
+  'JAVA DEVELOPER',
+  '.NET CORE DEVELOPER',
 ]
 
-function RoleCycler({ shouldReduceMotion }: { shouldReduceMotion: boolean }) {
-  const [roleIndex, setRoleIndex] = useState(0)
+export function Hero() {
+  const shouldReduceMotion = useReducedMotion()
+  const { setResumePreviewOpen, setCursor, resetCursor } = useAppStore()
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 })
+  const [titleIndex, setTitleIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTitleIndex((prev) => (prev + 1) % ROTATING_TITLES.length)
+    }, 2800)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     if (shouldReduceMotion) return
-    const id = setInterval(() => {
-      setRoleIndex(i => (i + 1) % roles.length)
-    }, 2500)
-    return () => clearInterval(id)
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { innerWidth, innerHeight } = window
+      // Normalize from -1 to 1
+      const x = (e.clientX / innerWidth) * 2 - 1
+      const y = (e.clientY / innerHeight) * 2 - 1
+      setMouseOffset({ x, y })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [shouldReduceMotion])
 
-  return (
-    <div className="h-8 md:h-10 flex items-center overflow-hidden">
-      <span className="text-xl md:text-2xl text-muted-foreground mr-2">I&apos;m a&nbsp;</span>
-      <div className="relative overflow-hidden h-8 md:h-10 flex items-center">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={roleIndex}
-            initial={{ y: 28, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -28, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="text-xl md:text-2xl font-semibold text-accent block"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            {roles[roleIndex]}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-    </div>
-  )
-}
-
-export function Hero() {
-  const shouldReduceMotion = !!useReducedMotion()
-  const { resumePreviewOpen, setResumePreviewOpen } = useAppStore()
-
-  // Mouse lighting effect
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
-    // Only compute for non-reduced motion
-    if (shouldReduceMotion) return
-    const { left, top } = currentTarget.getBoundingClientRect()
-    mouseX.set(clientX - left)
-    mouseY.set(clientY - top)
+  const scrollToWork = () => {
+    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })
   }
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.12,
-        delayChildren: 0.05,
-      },
-    },
-  }
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  }
-
-  const tagline = "Building scalable backend systems and robust REST APIs. Specializing in Java, Spring Boot, and modern web architectures."
 
   return (
     <section
-      className="portfolio-container section-padding flex flex-col justify-center min-h-[auto] md:min-h-[min(100dvh,850px)] relative overflow-hidden group/hero"
-      onMouseMove={handleMouseMove}
-      style={{ contentVisibility: 'visible' }}
+      id="hero"
+      className="relative min-h-[100svh] w-full flex flex-col justify-between pt-28 pb-12 px-4 sm:px-8 md:px-12 lg:px-16 overflow-hidden bg-[#050505]"
     >
-      {/* Floating Background Gradients */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Background Ambient Mesh Light */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-            y: [0, -30, 0]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent/5 blur-[120px] transform-gpu will-change-transform"
+          animate={
+            shouldReduceMotion
+              ? {}
+              : {
+                  x: mouseOffset.x * -40,
+                  y: mouseOffset.y * -40,
+                }
+          }
+          transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full bg-blue-600/10 blur-[140px]"
         />
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            x: [0, -40, 0],
-            y: [0, 40, 0]
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] rounded-full bg-indigo-500/5 blur-[100px] transform-gpu will-change-transform"
-        />
+        <div className="absolute bottom-10 right-10 w-[450px] h-[450px] rounded-full bg-indigo-600/10 blur-[130px]" />
       </div>
 
-      {/* Mouse Lighting (Cursor aware) */}
-      <motion.div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover/hero:opacity-100 hidden md:block"
-        style={{
-          background: useMotionTemplate`
-            radial-gradient(
-              650px circle at ${mouseX}px ${mouseY}px,
-              rgba(59, 130, 246, 0.05),
-              transparent 80%
-            )
-          `,
-        }}
-      />
-
-      <motion.div
-        className="space-y-8 relative z-10 pb-24 md:pb-0"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={itemVariants} className="space-y-4" style={{ willChange: 'transform, opacity' }}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            <span className="text-xs font-medium text-accent">Available for new opportunities</span>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-bold text-foreground text-pretty tracking-tight">
-            <span className="bg-gradient-to-r from-accent to-indigo-500 bg-clip-text text-transparent">
-              Pratham Sali
-            </span>
-          </h1>
-
-          {/* Cycling role subtitle optimized to prevent full Hero re-renders */}
-          <RoleCycler shouldReduceMotion={shouldReduceMotion} />
-        </motion.div>
-
-        {/* Single fade-in for tagline — no per-word animation overhead */}
-        <motion.p
-          variants={itemVariants}
-          className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed"
-          style={{ willChange: 'transform, opacity' }}
-        >
-          {tagline}
-        </motion.p>
-
-        <motion.div variants={itemVariants} className="flex flex-wrap gap-3 pt-4" style={{ willChange: 'transform, opacity' }}>
-          <Magnetic>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-colors duration-200 shadow-lg shadow-accent/20 text-sm md:text-base relative overflow-hidden group"
-            >
-              <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-              <Mail size={16} className="relative z-10" />
-              <span className="relative z-10">Get in Touch</span>
-            </a>
-          </Magnetic>
-
-          <Magnetic>
-            <a
-              href="https://github.com/Pratham8955"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 border border-border/50 bg-muted text-foreground font-medium rounded-lg hover:bg-muted/70 hover:text-accent hover:border-accent/50 transition-all duration-200 text-sm md:text-base group"
-            >
-              <Code size={16} className="group-hover:scale-110 transition-transform" />
-              GitHub
-            </a>
-          </Magnetic>
-
-          <Magnetic>
-            <a
-              href="https://www.linkedin.com/in/pratham-sali-7244a4216/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 border border-border/50 bg-muted text-foreground font-medium rounded-lg hover:bg-muted/70 hover:text-accent hover:border-accent/50 transition-all duration-200 text-sm md:text-base group"
-            >
-              <Briefcase size={16} className="group-hover:scale-110 transition-transform" />
-              LinkedIn
-            </a>
-          </Magnetic>
-
-          <Magnetic>
-            <motion.button
-              layoutId="resume-modal"
-              onClick={() => setResumePreviewOpen(true)}
-              className={`group relative flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-accent px-6 py-3 font-semibold text-accent-foreground shadow-lg hover:shadow-accent/25 ${resumePreviewOpen ? 'transition-none pointer-events-none' : ''}`}
-              style={{
-                opacity: resumePreviewOpen ? 0 : 1,
-                borderRadius: '0.5rem'
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FileText size={16} className="group-hover:scale-110 transition-transform" />
-              Resume
-            </motion.button>
-          </Magnetic>
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="text-sm text-muted-foreground pt-2">
-          Or email me directly at: <a href="mailto:prathamsali123@gmail.com" className="text-accent hover:underline font-medium">prathamsali123@gmail.com</a>
-        </motion.div>
-
-        {/* Stats Row */}
+      {/* Top Eyebrow & Status */}
+      <div className="w-full max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-20">
         <motion.div
-          variants={itemVariants}
-          className="grid grid-cols-3 gap-4 md:gap-6 pt-8 mt-2 w-full max-w-xs sm:max-w-sm md:max-w-xl border-t border-border/20"
-          style={{ willChange: 'transform, opacity' }}
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-3"
         >
-          <div className="group">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent group-hover:scale-105 transition-transform origin-left">50+</p>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
-              APIs Built
-            </p>
-          </div>
-          <div className="group">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent group-hover:scale-105 transition-transform origin-left">17+</p>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
-              Repositories
-            </p>
-          </div>
-          <div className="group">
-            <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-accent group-hover:scale-105 transition-transform origin-left">5+</p>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold font-mono">
-              Live Projects
-            </p>
+          <span className="font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold shrink-0">
+            {PORTFOLIO_DATA.personal.name}
+          </span>
+          <span className="text-slate-600">/</span>
+          <div className="h-5 overflow-hidden flex items-center">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={titleIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="font-mono text-xs uppercase tracking-wider text-blue-400 font-medium whitespace-nowrap"
+              >
+                {ROTATING_TITLES[titleIndex]}
+              </motion.span>
+            </AnimatePresence>
           </div>
         </motion.div>
-      </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 w-fit"
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+          <span className="font-mono text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">
+            {PORTFOLIO_DATA.personal.status}
+          </span>
+        </motion.div>
+      </div>
+
+      {/* Main Composition: Oversized Editorial Typography + 3D System Sculpture Layering */}
+      <div className="relative w-full max-w-7xl mx-auto my-auto py-8 sm:py-12 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+        {/* Left Column: Huge Editorial Typography Statement */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            style={
+              shouldReduceMotion
+                ? {}
+                : {
+                    transform: `translate3d(${mouseOffset.x * -12}px, ${mouseOffset.y * -12}px, 0)`,
+                  }
+            }
+          >
+            <h1 className="font-black text-5xl sm:text-7xl md:text-8xl lg:text-[5.5rem] xl:text-[6.5rem] tracking-tighter uppercase leading-[0.88] text-white">
+              <span className="block text-slate-400 hover:text-white transition-colors duration-300">
+                BUILDING
+              </span>
+              <span className="block bg-gradient-to-r from-white via-slate-200 to-blue-400 bg-clip-text text-transparent">
+                DIGITAL
+              </span>
+              <span className="block text-slate-400 hover:text-white transition-colors duration-300">
+                SYSTEMS.
+              </span>
+            </h1>
+
+            <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-slate-400 max-w-xl font-sans leading-relaxed">
+              {PORTFOLIO_DATA.personal.subHeadline}
+            </p>
+          </motion.div>
+
+          {/* Action CTAs: EXPLORE WORK + RESUME */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap items-center gap-3.5 sm:gap-4 mt-8 sm:mt-10"
+          >
+            <Magnetic>
+              <button
+                onClick={scrollToWork}
+                onMouseEnter={() => setCursor('button', 'EXPLORE')}
+                onMouseLeave={resetCursor}
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs uppercase tracking-widest font-bold shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all duration-300 group"
+              >
+                <span>EXPLORE WORK</span>
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </Magnetic>
+
+            <Magnetic>
+              <button
+                onClick={() => setResumePreviewOpen(true)}
+                onMouseEnter={() => setCursor('button', 'RESUME')}
+                onMouseLeave={resetCursor}
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-[#10121d] hover:bg-[#181b2a] border border-white/10 hover:border-blue-500/40 text-slate-200 hover:text-white font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-300 shadow-lg"
+              >
+                <FileText size={15} className="text-blue-400" />
+                <span>RESUME</span>
+              </button>
+            </Magnetic>
+          </motion.div>
+        </div>
+
+        {/* Right Column: Central Interactive 3D Digital System Architecture Sculpture */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center relative">
+          <SystemSculpture mouseXOffset={mouseOffset.x} mouseYOffset={mouseOffset.y} />
+        </div>
+      </div>
+
+      {/* Bottom Row: Authenticated Metrics */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        animate={shouldReduceMotion ? {} : { y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ willChange: 'transform' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6, duration: 0.8 }}
+        className="w-full max-w-7xl mx-auto pt-6 border-t border-white/[0.08] flex items-center justify-between"
       >
-        <a href="#about" className="text-muted-foreground hover:text-accent transition-colors flex flex-col items-center gap-2">
-          <span className="text-[10px] uppercase tracking-widest font-mono">Scroll</span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </a>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 w-full">
+          {PORTFOLIO_DATA.personal.stats.map((stat, i) => (
+            <div key={i} className="flex flex-col">
+              <span className="font-sans font-black text-2xl sm:text-3xl text-white tracking-tight">
+                {stat.value}
+              </span>
+              <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-blue-400 font-semibold mt-0.5">
+                {stat.label}
+              </span>
+              <span className="text-[11px] text-slate-500 hidden sm:block">
+                {stat.subtext}
+              </span>
+            </div>
+          ))}
+        </div>
       </motion.div>
     </section>
   )

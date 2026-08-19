@@ -1,53 +1,97 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Zap, Code2, Database, Layers } from 'lucide-react'
+import { Sparkles, Terminal, Activity, CheckCircle2, ShieldCheck, Flame } from 'lucide-react'
+import { PORTFOLIO_DATA } from '@/data/portfolio'
+import { GithubWidget } from './github-widget'
 
-export function CurrentlyBuildingWidget() {
-  const focuses = [
-    { name: 'Microservices Architecture', icon: Layers, color: 'text-blue-400' },
-    { name: 'Spring Boot 4', icon: Zap, color: 'text-green-400' },
-    { name: 'Docker & Kubernetes', icon: Database, color: 'text-cyan-400' },
-    { name: 'System Design', icon: Code2, color: 'text-purple-400' }
-  ]
+export function CurrentlyBuilding() {
+  const buildingItems = PORTFOLIO_DATA.currentlyBuilding.items
+  const philosophies = PORTFOLIO_DATA.philosophy
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="subtle-border rounded-xl p-5 md:p-6 bg-card/80 backdrop-blur-sm mt-8 w-full shadow-lg relative overflow-hidden"
-    >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-
-      <div className="flex items-center gap-3 mb-4">
-        <div className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
+    <section className="relative w-full py-28 px-4 sm:px-8 md:px-12 lg:px-16 bg-[#050505] overflow-hidden border-t border-white/[0.08]">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-white/10 pb-8">
+          <div>
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-emerald-400 font-semibold mb-3">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>ACTIVE SYSTEM RADAR</span>
+            </div>
+            <h2 className="font-black text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter text-white">
+              CURRENTLY BUILDING.
+            </h2>
+          </div>
+          <div className="font-mono text-xs text-slate-400">
+            <span className="text-emerald-400 font-bold">● STATUS: ACTIVE R&D</span>
+          </div>
         </div>
-        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-          Currently Focused On
-        </h3>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-        {focuses.map((focus, i) => {
-          const Icon = focus.icon
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-3 bg-muted/30 hover:bg-muted/60 transition-colors p-3 rounded-lg border border-border/30"
-            >
-              <Icon size={16} className={focus.color} />
-              <span className="text-sm font-medium text-muted-foreground">{focus.name}</span>
-            </motion.div>
-          )
-        })}
+        {/* Current Focus Grid + GitHub Widget Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20 items-start">
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {buildingItems.map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="p-5 sm:p-6 rounded-2xl border border-white/[0.08] hover:border-emerald-500/40 bg-[#080b14]/80 backdrop-blur-md transition-all duration-300 flex flex-col justify-between shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="font-mono text-[10px] font-bold text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                      {item.tag.toUpperCase()}
+                    </span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  </div>
+                  <h3 className="font-black text-lg text-white tracking-tight uppercase mb-2">
+                    {item.name}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 font-sans leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="lg:col-span-4">
+            <GithubWidget />
+          </div>
+        </div>
+
+        {/* Developer Philosophy Row */}
+        <div>
+          <h3 className="font-mono text-xs uppercase tracking-widest text-blue-400 font-bold mb-8 flex items-center gap-2">
+            <span>ENGINEERING PHILOSOPHY & PRINCIPLES:</span>
+            <div className="h-px flex-1 bg-white/10" />
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {philosophies.map((item, i) => (
+              <div
+                key={i}
+                className="p-5 rounded-2xl border border-white/[0.07] bg-white/[0.02] flex flex-col justify-between"
+              >
+                <div>
+                  <span className="font-mono text-xs text-blue-400 font-bold block mb-2">
+                    0{i + 1}
+                  </span>
+                  <h4 className="font-black text-base text-white uppercase tracking-tight mb-2">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-slate-400 font-sans leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </motion.div>
+    </section>
   )
 }

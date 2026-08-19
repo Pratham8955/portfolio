@@ -1,144 +1,128 @@
 'use client'
 
-import { motion, useMotionTemplate, useMotionValue, Variants } from 'framer-motion'
-import { CurrentlyBuildingWidget } from './currently-building'
-import { MouseEvent } from 'react'
-import { GraduationCap, Code2, Rocket, Briefcase } from 'lucide-react'
-
-function AboutCard({ children, title, icon: Icon, delay = 0 }: { children: React.ReactNode, title: string, icon: any, delay?: number }) {
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect()
-    mouseX.set(clientX - left)
-    mouseY.set(clientY - top)
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay }}
-      onMouseMove={handleMouseMove}
-      className="relative subtle-border rounded-xl p-6 bg-card/80 group overflow-hidden"
-    >
-      <motion.div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-        style={{
-          background: useMotionTemplate`
-            radial-gradient(
-              350px circle at ${mouseX}px ${mouseY}px,
-              rgba(59, 130, 246, 0.1),
-              transparent 80%
-            )
-          `,
-        }}
-      />
-      <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
-            <Icon size={20} />
-          </div>
-          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-        </div>
-        <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground leading-relaxed transition-colors duration-300">
-          {children}
-        </p>
-      </div>
-    </motion.div>
-  )
-}
+import { motion, useReducedMotion } from 'framer-motion'
+import { GraduationCap, Briefcase, Code2, Server, Cpu, Database, Sparkles, CheckCircle2 } from 'lucide-react'
+import { PORTFOLIO_DATA } from '@/data/portfolio'
+import { useAppStore } from '@/lib/store'
 
 export function About() {
-  const techStacks = [
-    { label: 'Java', category: 'language' },
-    { label: 'Spring Boot', category: 'backend' },
-    { label: 'MySQL', category: 'database' },
-    { label: 'Node.js', category: 'backend' },
-    { label: 'TypeScript', category: 'language' },
-    { label: 'Redis', category: 'database' },
-    { label: 'MongoDB', category: 'database' },
-    { label: 'Next.js', category: 'frontend' },
-    { label: 'React', category: 'frontend' },
+  const shouldReduceMotion = useReducedMotion()
+  const { setCursor, resetCursor } = useAppStore()
+
+  const focusPillars = [
+    {
+      title: 'BACKEND ARCHITECTURE',
+      desc: 'Building scalable RESTful microservices, event-driven pipelines, and robust service layers in Node.js, Spring Boot, and .NET Core.',
+      icon: Server,
+      tech: 'Node.js • Java • Spring Boot • Express • .NET',
+    },
+    {
+      title: 'HIGH-THROUGHPUT CACHING & DB',
+      desc: 'Optimizing high-frequency reads and session state using Redis in-memory storage, paired with relational (MySQL, SQL Server) & document (MongoDB) databases.',
+      icon: Database,
+      tech: 'Redis • MongoDB • MySQL • SQL Server',
+    },
+    {
+      title: 'REACTIVE MODERN FRONTENDS',
+      desc: 'Crafting responsive, high-performance web applications and design systems utilizing Next.js 16 App Router, React 19, TypeScript, and modern CSS.',
+      icon: Code2,
+      tech: 'Next.js • React • TypeScript • Tailwind CSS',
+    },
+    {
+      title: 'SYSTEM RELIABILITY & TESTING',
+      desc: 'Ensuring production stability through rigorous endpoint validation, Postman test automation suites, JWT authentication, and RBAC security.',
+      icon: Cpu,
+      tech: 'Postman • REST APIs • Docker • Git',
+    },
   ]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-      },
-    },
-  }
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { type: 'spring', stiffness: 300, damping: 20 },
-    },
-  }
-
   return (
-    <section id="about" className="portfolio-container section-padding">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        <div className="flex items-center gap-4 mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-            About Me
-          </h2>
-          <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
-        </div>
+    <section id="about" className="relative w-full py-28 px-4 sm:px-8 md:px-12 lg:px-16 bg-[#050505] overflow-hidden">
+      {/* Subtle ambient lighting */}
+      <div className="pointer-events-none absolute top-1/3 right-0 w-[500px] h-[500px] rounded-full bg-blue-600/5 blur-[150px] -z-10" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          <div className="lg:col-span-7 space-y-6">
-            <AboutCard title="Background" icon={GraduationCap} delay={0.1}>
-              Web developer with hands-on full-stack experience gained at NJ India Pvt. Ltd. and Elaunch Solutions. Having completed my MSc in ICT, I focus on building production-grade applications with modern web technologies.
-            </AboutCard>
-
-            <AboutCard title="Approach" icon={Rocket} delay={0.2}>
-              Strong foundation in backend development and REST API design, with proficiency in frontend frameworks. Passionate about clean code, performance optimization, and solving complex problems. I treat every project as an opportunity to build something robust and scalable.
-            </AboutCard>
-          </div>
-
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="subtle-border rounded-xl p-6 bg-card/50 backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4 flex items-center gap-2">
-                <Code2 size={16} />
-                Core Tech Stack
-              </h3>
-              <motion.div
-                className="flex flex-wrap gap-2"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                {techStacks.map((tech) => (
-                  <motion.span
-                    key={tech.label}
-                    className="px-3 py-1.5 rounded-md text-xs font-medium bg-muted/80 text-muted-foreground hover:bg-accent/20 hover:text-accent border border-border/50 hover:border-accent/30 transition-all duration-300 cursor-default"
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    {tech.label}
-                  </motion.span>
-                ))}
-              </motion.div>
+      <div className="max-w-7xl mx-auto">
+        {/* Editorial Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-white/10 pb-8">
+          <div>
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-blue-400 font-semibold mb-3">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <span>DEVELOPER PROFILE</span>
             </div>
-            
-            <CurrentlyBuildingWidget />
+            <h2 className="font-black text-5xl sm:text-7xl md:text-8xl uppercase tracking-tighter text-white">
+              WHO I AM.
+            </h2>
+          </div>
+
+          <div className="font-mono text-xs text-slate-400 max-w-sm flex flex-col gap-1.5">
+            <span className="text-white font-bold">{PORTFOLIO_DATA.personal.name}</span>
+            <span>{PORTFOLIO_DATA.personal.location}</span>
+            <span className="text-blue-400">{PORTFOLIO_DATA.about.subtitle}</span>
           </div>
         </div>
-      </motion.div>
+
+        {/* Narrative & Focus Split Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          {/* Left Narrative Column (5 Cols) */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            {PORTFOLIO_DATA.about.narrative.map((paragraph, idx) => (
+              <p
+                key={idx}
+                className="text-base sm:text-lg text-slate-300 font-sans leading-relaxed"
+              >
+                {paragraph}
+              </p>
+            ))}
+
+            {/* Quick Education / Career Snapshot Badge */}
+            <div className="mt-4 p-5 rounded-2xl bg-[#0c0e18] border border-white/10 flex flex-col gap-3">
+              <div className="flex items-center gap-2.5 text-blue-400 font-mono text-xs font-bold uppercase tracking-wider">
+                <GraduationCap size={16} />
+                <span>ACADEMIC DISTINCTION</span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                Completed <strong className="text-white">MSc in ICT</strong> (CGPA: 7.77) and <strong className="text-white">BCA</strong> (CGPA: 8.23). Experienced through enterprise roles at <strong className="text-white">Elaunch Solutions</strong> and <strong className="text-white">NJ India</strong>.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Architecture Pillars (7 Cols) */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            {focusPillars.map((pillar, idx) => {
+              const Icon = pillar.icon
+
+              return (
+                <motion.div
+                  key={pillar.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  onMouseEnter={() => setCursor('button', 'FOCUS')}
+                  onMouseLeave={resetCursor}
+                  className="p-5 sm:p-6 rounded-2xl border border-white/[0.08] hover:border-blue-500/40 bg-[#090b14]/80 hover:bg-[#0e1224]/80 backdrop-blur-md transition-all duration-300 flex flex-col justify-between group shadow-lg"
+                >
+                  <div>
+                    <div className="p-3 rounded-xl bg-white/5 group-hover:bg-blue-600/20 text-slate-400 group-hover:text-cyan-300 border border-white/10 group-hover:border-cyan-500/30 transition-colors w-fit mb-4">
+                      <Icon size={20} />
+                    </div>
+                    <h3 className="font-black text-sm sm:text-base text-white tracking-tight uppercase mb-2">
+                      {pillar.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-sans mb-4">
+                      {pillar.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-white/[0.06] font-mono text-[10px] text-blue-400">
+                    {pillar.tech}
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
     </section>
   )
 }

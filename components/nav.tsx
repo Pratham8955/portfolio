@@ -1,173 +1,159 @@
 'use client'
 
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { ThemeToggle } from './theme-toggle'
 import { useState, useEffect } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { FileText, Command as CommandIcon, Menu } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
-import { Command as CommandIcon } from 'lucide-react'
+import { Magnetic } from './magnetic'
+import { PORTFOLIO_DATA } from '@/data/portfolio'
 
 export function Navigation() {
-  const shouldReduceMotion = !!useReducedMotion()
-  const { resumePreviewOpen, projectModalOpen, setCommandPaletteOpen } = useAppStore()
-  const [activeSection, setActiveSection] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
+  const {
+    resumePreviewOpen,
+    selectedProjectId,
+    setFullScreenMenuOpen,
+    setResumePreviewOpen,
+    setCommandPaletteOpen,
+    setCursor,
+    resetCursor,
+  } = useAppStore()
 
-  const navItems = [
+  const [activeSection, setActiveSection] = useState('')
+  const [scrolled, setScrolled] = useState(false)
+
+  const navLinks = [
     { label: 'About', href: '#about' },
     { label: 'Experience', href: '#experience' },
     { label: 'Education', href: '#education' },
     { label: 'Projects', href: '#projects' },
-    { label: 'Skills', href: '#skills' },
+    { label: 'Skills', href: '#stack' },
     { label: 'Contact', href: '#contact' },
   ]
 
   useEffect(() => {
-    const sections = navItems.map(item => item.href.slice(1))
-    const observerOptions = {
-      root: null,
-      rootMargin: '-30% 0px -60% 0px',
-      threshold: 0,
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id)
-        }
-      })
-    }, observerOptions)
-
-    sections.forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
-
     const handleScroll = () => {
-      if (window.scrollY < 100) {
-        setActiveSection('')
-      } else if (Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 50) {
-        setActiveSection('contact')
+      setScrolled(window.scrollY > 40)
+
+      const sections = ['hero', 'about', 'experience', 'education', 'projects', 'how-i-build', 'stack', 'contact']
+      const scrollPosition = window.scrollY + window.innerHeight * 0.35
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId)
+        if (el) {
+          const top = el.offsetTop
+          const height = el.offsetHeight
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(sectionId)
+            break
+          }
+        }
       }
     }
-    window.addEventListener('scroll', handleScroll)
-    // Run on initial load to handle page refresh
-    handleScroll()
 
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('scroll', handleScroll)
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const hideNav = resumePreviewOpen || selectedProjectId !== null
+
   return (
-    <>
-      {/* Nav Pill */}
-      <motion.nav
-        className="fixed top-5 left-0 right-0 mx-auto z-50 w-fit max-w-[calc(100vw-2rem)] border border-border/40 bg-background/60 backdrop-blur-lg rounded-full shadow-lg px-3 md:px-5 py-1.5 flex items-center gap-4 md:gap-6"
-        initial={{ y: -100 }}
-        animate={{ y: (resumePreviewOpen || projectModalOpen) ? -150 : 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+    <motion.header
+      initial={{ y: -80, opacity: 0 }}
+      animate={{
+        y: hideNav ? -120 : 0,
+        opacity: hideNav ? 0 : 1,
+      }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="fixed top-4 sm:top-6 inset-x-0 z-50 flex justify-center px-4 pointer-events-none"
+    >
+      <nav
+        className={`pointer-events-auto flex items-center justify-between gap-3 sm:gap-6 px-4 sm:px-6 py-2.5 rounded-full transition-all duration-300 ${
+          scrolled
+            ? 'bg-[#0a0c16]/85 backdrop-blur-xl border border-white/15 shadow-[0_10px_35px_rgba(0,0,0,0.7)]'
+            : 'bg-[#0a0c16]/60 backdrop-blur-lg border border-white/10 shadow-lg'
+        }`}
       >
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-2">
-          {navItems.map((item) => {
-            const isActive = activeSection === item.href.slice(1)
+        {/* Monogram / Brand */}
+        <a
+          href="#hero"
+          onMouseEnter={() => setCursor('button', 'HOME')}
+          onMouseLeave={resetCursor}
+          className="flex items-center gap-2 font-black text-sm sm:text-base tracking-tighter text-white hover:text-blue-400 transition-colors"
+        >
+          <span className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-mono font-bold text-white shadow-[0_0_12px_rgba(59,130,246,0.5)]">
+            {PORTFOLIO_DATA.personal.monogram}
+          </span>
+          <span className="hidden sm:inline font-bold tracking-tight">PRATHAM SALI</span>
+        </a>
+
+        {/* Center Nav Links (Desktop) */}
+        <div className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const sectionTarget = link.href.replace('#', '')
+            const isActive = activeSection === sectionTarget
+
             return (
               <a
-                key={item.label}
-                href={item.href}
-                className={`text-sm font-medium transition-colors relative px-4 py-1.5 rounded-full z-10 ${isActive
-                    ? 'text-accent'
-                    : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                key={link.label}
+                href={link.href}
+                onMouseEnter={() => setCursor('button')}
+                onMouseLeave={resetCursor}
+                className={`relative px-3.5 py-1.5 rounded-full font-mono text-xs uppercase tracking-wider transition-colors duration-200 ${
+                  isActive
+                    ? 'text-white font-bold bg-white/10 border border-white/15 shadow-inner'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                }`}
               >
-                {item.label}
-                {isActive && (
-                  <motion.span
-                    layoutId={shouldReduceMotion ? undefined : "activeSectionBg"}
-                    className="absolute inset-0 bg-accent/10 border border-accent/20 rounded-full -z-10"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
+                {link.label}
               </a>
             )
           })}
         </div>
 
-        <div className="flex items-center gap-2 pr-1">
-          <motion.button
-            onClick={() => setCommandPaletteOpen(true)}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-full border border-border/50 hover:bg-muted/50 transition-colors"
-            title="Open Command Palette (Ctrl+K or ?)"
-          >
-            <CommandIcon size={14} />
-            <span>Cmd + K</span>
-          </motion.button>
-          <ThemeToggle />
-
-          {/* Mobile Menu Trigger */}
-          <motion.button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/50 transition-colors"
-            whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {/* Right Actions: Resume, Cmd+K, Menu Trigger */}
+        <div className="flex items-center gap-2">
+          {/* Resume Trigger */}
+          <Magnetic>
+            <button
+              onClick={() => setResumePreviewOpen(true)}
+              onMouseEnter={() => setCursor('button', 'RESUME')}
+              onMouseLeave={resetCursor}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white font-mono text-[11px] font-semibold tracking-wider transition-colors"
             >
-              {isOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </motion.button>
-        </div>
-      </motion.nav>
+              <FileText size={13} />
+              <span>RESUME</span>
+            </button>
+          </Magnetic>
 
-      {/* Mobile Dropdown — fixed to viewport, always centered */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed top-[4.5rem] left-1/2 -translate-x-1/2 z-40 w-[85vw] max-w-xs p-3 bg-background/90 backdrop-blur-xl border border-border/40 rounded-3xl shadow-2xl flex flex-col gap-1 md:hidden"
+          {/* Cmd+K Palette Trigger */}
+          <button
+            onClick={() => setCommandPaletteOpen(true)}
+            onMouseEnter={() => setCursor('button', 'SEARCH')}
+            onMouseLeave={resetCursor}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white font-mono text-[11px] transition-colors"
+            title="Open Command Palette (Cmd + K)"
           >
-            {navItems.map((item) => {
-              const isActive = activeSection === item.href.slice(1)
-              return (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`text-sm font-medium px-4 py-3 rounded-2xl transition-colors ${isActive
-                      ? 'bg-accent/10 text-accent font-semibold'
-                      : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'
-                    }`}
-                >
-                  {item.label}
-                </a>
-              )
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+            <CommandIcon size={12} />
+            <span>K</span>
+          </button>
+
+          {/* Full-Screen Menu Hamburger */}
+          <Magnetic>
+            <button
+              onClick={() => setFullScreenMenuOpen(true)}
+              onMouseEnter={() => setCursor('menu')}
+              onMouseLeave={resetCursor}
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-blue-600 border border-white/15 text-white font-mono text-xs uppercase tracking-wider font-bold transition-all duration-300 shadow-sm"
+              aria-label="Open Fullscreen Menu"
+            >
+              <Menu size={14} />
+              <span className="hidden xs:inline">MENU</span>
+            </button>
+          </Magnetic>
+        </div>
+      </nav>
+    </motion.header>
   )
 }

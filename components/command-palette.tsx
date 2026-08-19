@@ -14,11 +14,13 @@ import {
   Globe,
   GraduationCap,
   User,
-  X
+  Compass,
+  X,
+  ExternalLink
 } from 'lucide-react'
 
 export function CommandPalette() {
-  const { commandPaletteOpen, setCommandPaletteOpen, setResumePreviewOpen } = useAppStore()
+  const { commandPaletteOpen, setCommandPaletteOpen, setResumePreviewOpen, setSelectedProjectId } = useAppStore()
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -35,7 +37,6 @@ export function CommandPalette() {
   const runCommand = React.useCallback(
     (command: () => unknown) => {
       setCommandPaletteOpen(false)
-      // Small delay ensures the dialog's scroll-lock is removed before scrolling
       setTimeout(() => {
         command()
       }, 150)
@@ -49,102 +50,118 @@ export function CommandPalette() {
         <Command.Dialog
           open={commandPaletteOpen}
           onOpenChange={setCommandPaletteOpen}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/50 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="w-full max-w-xl overflow-hidden rounded-xl border border-border bg-card shadow-2xl"
+            className="w-full max-w-xl overflow-hidden rounded-2xl border border-white/15 bg-[#090b14] shadow-2xl text-white"
           >
-            <div className="flex items-center border-b border-border px-4">
+            <div className="flex items-center border-b border-white/10 px-4">
               <Command.Input
-                placeholder="Type a command or search..."
-                className="flex w-full bg-transparent py-4 text-sm outline-none placeholder:text-muted-foreground text-foreground"
+                placeholder="Type a command or search sections..."
+                className="flex w-full bg-transparent py-4 text-sm outline-none placeholder:text-slate-500 text-white font-mono"
               />
               <button
                 onClick={() => setCommandPaletteOpen(false)}
-                className="ml-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
+                className="ml-2 p-1 rounded-sm opacity-70 hover:opacity-100 transition-opacity"
               >
                 <X size={18} />
                 <span className="sr-only">Close</span>
               </button>
             </div>
-            <Command.List className="max-h-[300px] overflow-y-auto p-2" data-lenis-prevent="true">
-              <Command.Empty className="p-4 text-center text-sm text-muted-foreground">
-                No results found.
+            <Command.List className="max-h-[340px] overflow-y-auto p-2 font-sans" data-lenis-prevent="true">
+              <Command.Empty className="p-4 text-center text-sm font-mono text-slate-500">
+                No matching records found.
               </Command.Empty>
 
-              <Command.Group heading="Navigation" className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+              <Command.Group heading="Navigation" className="px-2 py-1.5 text-xs font-mono font-bold text-blue-400">
                 <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <User size={16} />
+                  <User size={16} className="text-blue-400" />
                   <span>About</span>
                 </Command.Item>
                 <Command.Item
-                  onSelect={() => runCommand(() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
-                >
-                  <Code size={16} />
-                  <span>Projects</span>
-                </Command.Item>
-                <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' }))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <Briefcase size={16} />
+                  <Briefcase size={16} className="text-blue-400" />
                   <span>Experience</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('education')?.scrollIntoView({ behavior: 'smooth' }))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <GraduationCap size={16} />
+                  <GraduationCap size={16} className="text-blue-400" />
                   <span>Education</span>
                 </Command.Item>
                 <Command.Item
-                  onSelect={() => runCommand(() => document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' }))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  onSelect={() => runCommand(() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <Terminal size={16} />
-                  <span>Skills</span>
+                  <Code size={16} className="text-blue-400" />
+                  <span>Projects</span>
+                </Command.Item>
+                <Command.Item
+                  onSelect={() => runCommand(() => document.getElementById('stack')?.scrollIntoView({ behavior: 'smooth' }))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
+                >
+                  <Terminal size={16} className="text-blue-400" />
+                  <span>Skills & Stack</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => runCommand(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <Mail size={16} />
+                  <Mail size={16} className="text-blue-400" />
                   <span>Contact</span>
                 </Command.Item>
               </Command.Group>
 
-              <Command.Group heading="Links" className="px-2 py-1.5 text-xs font-medium text-muted-foreground mt-2">
+              <Command.Group heading="Featured Projects" className="px-2 py-1.5 text-xs font-mono font-bold text-emerald-400 mt-2">
                 <Command.Item
-                  onSelect={() => runCommand(() => window.open('https://github.com/Pratham8955', '_blank'))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  onSelect={() => runCommand(() => setSelectedProjectId('strata'))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <GitBranch size={16} />
-                  <span>GitHub</span>
+                  <ExternalLink size={16} className="text-emerald-400" />
+                  <span>Open Strata Case Study (QR SaaS)</span>
                 </Command.Item>
                 <Command.Item
-                  onSelect={() => runCommand(() => window.open('https://www.linkedin.com/in/pratham-sali-7244a4216/', '_blank'))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
+                  onSelect={() => runCommand(() => setSelectedProjectId('maham'))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
                 >
-                  <Globe size={16} />
-                  <span>LinkedIn</span>
-                </Command.Item>
-                <Command.Item
-                  onSelect={() => runCommand(() => setResumePreviewOpen(true))}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground hover:bg-muted/50 aria-selected:bg-muted aria-selected:text-accent"
-                >
-                  <FileText size={16} />
-                  <span>Resume</span>
+                  <ExternalLink size={16} className="text-emerald-400" />
+                  <span>Open Maham Case Study (Enterprise System)</span>
                 </Command.Item>
               </Command.Group>
 
+              <Command.Group heading="External Links" className="px-2 py-1.5 text-xs font-mono font-bold text-slate-400 mt-2">
+                <Command.Item
+                  onSelect={() => runCommand(() => window.open('https://github.com/Pratham8955', '_blank'))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
+                >
+                  <GitBranch size={16} />
+                  <span>GitHub Profile</span>
+                </Command.Item>
+                <Command.Item
+                  onSelect={() => runCommand(() => window.open('https://www.linkedin.com/in/pratham-sali-7244a4216/', '_blank'))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
+                >
+                  <Globe size={16} />
+                  <span>LinkedIn Profile</span>
+                </Command.Item>
+                <Command.Item
+                  onSelect={() => runCommand(() => setResumePreviewOpen(true))}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-300 hover:bg-white/5 aria-selected:bg-blue-600/20 aria-selected:text-white"
+                >
+                  <FileText size={16} />
+                  <span>Open Resume Preview Modal</span>
+                </Command.Item>
+              </Command.Group>
             </Command.List>
           </motion.div>
         </Command.Dialog>
