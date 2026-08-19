@@ -12,25 +12,25 @@ export async function POST(request: Request) {
       )
     }
 
-    const accessKey = (
-      process.env.WEB3FORMS_ACCESS_KEY?.trim() || '9f62dc2a-e329-4a84-8073-b3167e1aa26e'
-    )
-    
-    const formData = new FormData()
-    formData.append('access_key', String(accessKey))
-    formData.append('name', String(name).trim())
-    formData.append('email', String(email).trim())
-    formData.append('message', String(message).trim())
-    formData.append('subject', `New Portfolio Inquiry from ${name}`)
-    formData.append('from_name', 'Pratham Sali Portfolio')
+    const accessKey =
+      process.env.WEB3FORMS_ACCESS_KEY?.trim() ||
+      process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim() ||
+      '9f62dc2a-e329-4a84-8073-b3167e1aa26e'
 
     const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Accept: 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
-      body: formData,
+      body: JSON.stringify({
+        access_key: String(accessKey),
+        name: String(name).trim(),
+        email: String(email).trim(),
+        message: String(message).trim(),
+        subject: `New Portfolio Inquiry from ${name}`,
+        from_name: 'Pratham Sali Portfolio',
+      }),
     })
 
     const rawText = await response.text()
@@ -39,12 +39,14 @@ export async function POST(request: Request) {
     try {
       data = JSON.parse(rawText)
     } catch {
-      console.warn('Web3Forms returned raw payload:', rawText)
       if (response.ok) {
         return NextResponse.json({ success: true })
       }
       return NextResponse.json(
-        { error: 'Email service returned an unexpected response format.' },
+        {
+          error:
+            'Unable to deliver message through automated email relay. Please reach out directly to Prathamsali107@gmail.com.',
+        },
         { status: 502 }
       )
     }

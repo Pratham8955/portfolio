@@ -28,27 +28,80 @@ export function Contact() {
     setFormStatus('submitting')
     setErrorMessage('')
 
+    const accessKey =
+      process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim() ||
+      '9f62dc2a-e329-4a84-8073-b3167e1aa26e'
+
     try {
-      const response = await fetch('/api/contact', {
+      // 1. Direct browser submission to Web3Forms (passes Cloudflare origin checks)
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+          subject: `Portfolio Inquiry from ${formData.name.trim()}`,
+          from_name: 'Pratham Sali Portfolio',
+        }),
+      })
+
+      const data = await response.json().catch(() => null)
+
+      if (response.ok && (data?.success || response.status === 200)) {
+        setFormStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+        setTimeout(() => setFormStatus('idle'), 5000)
+        return
+      }
+
+      // 2. If client-side failed, attempt server route fallback
+      const serverRes = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       })
+      const serverData = await serverRes.json().catch(() => null)
 
-      const data = await response.json()
-
-      if (response.ok && data.success) {
+      if (serverRes.ok && serverData?.success) {
         setFormStatus('success')
         setFormData({ name: '', email: '', message: '' })
         setTimeout(() => setFormStatus('idle'), 5000)
       } else {
         setFormStatus('error')
-        setErrorMessage(data.error || 'Failed to transmit message. Please email directly.')
+        setErrorMessage(
+          data?.message ||
+          serverData?.error ||
+          'Failed to send message. Please send an email directly.'
+        )
       }
     } catch (err) {
       console.error('Contact submit error:', err)
+      
+      // Attempt server route fallback if browser fetch was blocked (e.g. ad-blocker)
+      try {
+        const serverRes = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+        const serverData = await serverRes.json().catch(() => null)
+        if (serverRes.ok && serverData?.success) {
+          setFormStatus('success')
+          setFormData({ name: '', email: '', message: '' })
+          setTimeout(() => setFormStatus('idle'), 5000)
+          return
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback error:', fallbackErr)
+      }
+
       setFormStatus('error')
       setErrorMessage('Network error while dispatching message. Please email directly.')
     }

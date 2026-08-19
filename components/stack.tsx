@@ -77,7 +77,6 @@ export function Stack() {
             <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
               {displayedSkills.map((skill) => {
                 const isHovered = hoveredSkill?.name === skill.name
-                const isRelated = hoveredSkill?.relatedTech.includes(skill.name)
 
                 return (
                   <motion.div
@@ -103,8 +102,6 @@ export function Stack() {
                       className={`p-4 sm:p-5 border transition-all duration-300 relative h-full ${
                         isHovered
                           ? 'bg-[#101428] border-blue-500 shadow-[0_0_25px_rgba(59,130,246,0.35)] scale-[1.02] z-20'
-                          : isRelated
-                          ? 'bg-[#0e1224] border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
                           : 'bg-[#0a0c16]/80 hover:bg-[#0f1222] border-white/[0.08] hover:border-white/20 z-10'
                       }`}
                     >
@@ -205,7 +202,7 @@ export function Stack() {
 
                   <div>
                     <h4 className="font-mono text-xs uppercase tracking-wider text-slate-400 mb-2 font-bold">
-                      INTERCONNECTED STACK NODES:
+                      RELATED TECHNOLOGIES:
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
                       {hoveredSkill.relatedTech.map((tech) => (
@@ -222,7 +219,7 @@ export function Stack() {
               ) : (
                 <div className="py-12 text-center text-slate-500 space-y-3 font-mono text-xs">
                   <Code2 size={32} className="mx-auto text-slate-600 opacity-60" />
-                  <p>HOVER OVER ANY TECHNOLOGY TO INSPECT ARCHITECTURAL RELATIONSHIPS & PROJECT IMPLEMENTATIONS.</p>
+                  <p>HOVER OVER ANY TECHNOLOGY TO INSPECT DETAILS & PROJECT IMPLEMENTATIONS.</p>
                 </div>
               )}
             </div>
