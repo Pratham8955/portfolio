@@ -9,7 +9,7 @@ import { Magnetic } from './magnetic'
 import { useAppStore } from '@/lib/store'
 
 const ROTATING_TITLES = [
-  'FULL-STACK SOFTWARE DEVELOPER',
+  'FULL-STACK DEVELOPER',
   'BACKEND ENGINEER',
   'JAVA DEVELOPER',
   '.NET CORE DEVELOPER',
