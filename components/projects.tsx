@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion, useMotionTemplate, useMotionValue, AnimatePresence } from 'framer-motion'
-import { ExternalLink, GitBranch, X, Building2, Briefcase, ShieldCheck } from 'lucide-react'
+import { ExternalLink, GitBranch, X, Building2, Briefcase, ShieldCheck, ArrowUpRight } from 'lucide-react'
 import { useState, MouseEvent, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppStore } from '@/lib/store'
@@ -375,6 +375,7 @@ function ProjectCard({ project, index, onClick, isActive }: { project: typeof pr
   }
 
   const isIndustry = project.type === 'Industry Project'
+  const hasLiveDemo = Boolean(project.live && project.live !== '' && project.live !== '#')
 
   return (
     <motion.div
@@ -413,53 +414,78 @@ function ProjectCard({ project, index, onClick, isActive }: { project: typeof pr
       <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-accent/20 transition-colors duration-500 z-0" />
 
       <div className="relative z-10 flex flex-col h-full">
-        {/* Project Tag / Badge */}
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-            isIndustry
-              ? 'bg-accent/15 text-accent border border-accent/30 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
-              : 'bg-muted text-muted-foreground border border-border/40'
-          }`}>
-            {isIndustry ? <Building2 size={12} /> : <Briefcase size={12} />}
-            {project.type}
-          </span>
-          {project.company && (
-            <span className="text-xs text-muted-foreground font-medium truncate">
-              • {project.company}
+        {/* Project Tag / Badge & Live Demo CTA */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+              isIndustry
+                ? 'bg-accent/15 text-accent border border-accent/30 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
+                : 'bg-muted text-muted-foreground border border-border/40'
+            }`}>
+              {isIndustry ? <Building2 size={12} /> : <Briefcase size={12} />}
+              {project.type}
             </span>
+            {project.company && (
+              <span className="text-xs text-muted-foreground font-medium truncate">
+                • {project.company}
+              </span>
+            )}
+          </div>
+
+          {hasLiveDemo && (
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm shadow-accent/20 hover:shadow-md hover:shadow-accent/30 hover:scale-105 active:scale-95 transition-all duration-200 shrink-0 z-20 group/live"
+              title={`Open Live Demo for ${project.name}`}
+              aria-label={`Open Live Demo for ${project.name}`}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+              </span>
+              <span>Live Demo</span>
+              <ExternalLink size={12} className="shrink-0 transition-transform group-hover/live:translate-x-0.5 group-hover/live:-translate-y-0.5" />
+            </a>
           )}
         </div>
 
-        <div className="flex items-start justify-between mb-4">
+        <div className="mb-4">
           <h3 className="text-lg md:text-2xl font-bold text-foreground group-hover:text-accent transition-colors leading-snug">
             {project.name}
           </h3>
-          <div className="p-2 rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-300 transform group-hover:rotate-45 shrink-0 ml-2">
-            <ExternalLink size={18} />
-          </div>
         </div>
 
         <p className="text-muted-foreground group-hover:text-foreground/90 mb-6 text-sm leading-relaxed transition-colors flex-1">
           {project.description}
         </p>
 
-        <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
-          {project.technologies.slice(0, 4).map((tech, i) => (
-            <motion.span
-              key={tech}
-              className="px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-muted-foreground border border-border/30"
-              initial={{ y: 10, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ delay: i * 0.1 + 0.2 }}
-            >
-              {tech}
-            </motion.span>
-          ))}
-          {project.technologies.length > 4 && (
-            <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-muted text-muted-foreground border border-border/30">
-              +{project.technologies.length - 4}
-            </span>
-          )}
+        <div className="flex items-center justify-between gap-2 pt-4 border-t border-border/50 mt-auto">
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
+            {project.technologies.slice(0, 4).map((tech, i) => (
+              <motion.span
+                key={tech}
+                className="px-2.5 py-1 text-xs font-medium rounded-md bg-muted/70 text-muted-foreground border border-border/30"
+                initial={{ y: 10, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ delay: i * 0.05 + 0.1 }}
+              >
+                {tech}
+              </motion.span>
+            ))}
+            {project.technologies.length > 4 && (
+              <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-muted/70 text-muted-foreground border border-border/30">
+                +{project.technologies.length - 4}
+              </span>
+            )}
+          </div>
+
+          <span className="text-xs text-muted-foreground/80 group-hover:text-accent font-medium transition-colors inline-flex items-center gap-1 shrink-0 ml-2">
+            Details
+            <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </span>
         </div>
       </div>
     </motion.div>
