@@ -72,8 +72,8 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
         initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
         animate={{
           opacity: showSplash ? 0 : 1,
-          scale: animationComplete ? "" : (showSplash ? 0.95 : 1),
-          filter: animationComplete ? "" : (showSplash ? "blur(4px)" : "blur(0px)")
+          scale: showSplash ? 0.95 : 1,
+          filter: showSplash ? "blur(4px)" : "blur(0px)",
         }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         onAnimationComplete={() => {

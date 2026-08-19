@@ -1,19 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Copy, Check, Send, FileText, AlertCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Copy, Check, Send, FileText, AlertCircle, Clock } from 'lucide-react'
 import { PORTFOLIO_DATA } from '@/data/portfolio'
 import { Magnetic } from './magnetic'
 import { GithubIcon, LinkedinIcon } from './icons'
 import { useAppStore } from '@/lib/store'
 
+const COOLDOWN_DURATION = 45 // 45 seconds between submissions
+const MAX_SUBMISSIONS_PER_WINDOW = 3 // Max 3 submissions in 5 minutes
+const WINDOW_DURATION_MS = 5 * 60 * 1000 // 5 minutes
+
 export function Contact() {
   const { setResumePreviewOpen, setCursor, resetCursor } = useAppStore()
   const [copiedEmail, setCopiedEmail] = useState(false)
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [formData, setFormData] = useState({ name: '', email: '', message: '', _gotcha: '' })
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [cooldownRemaining, setCooldownRemaining] = useState<number>(0)
+
+  // Initialize and tick cooldown timer from localStorage
+  useEffect(() => {
+    const checkCooldown = () => {
+      try {
+        const lastSubmit = localStorage.getItem('ps_last_contact_ts')
+        if (lastSubmit) {
+          const elapsed = Math.floor((Date.now() - parseInt(lastSubmit, 10)) / 1000)
+          if (elapsed < COOLDOWN_DURATION) {
+            setCooldownRemaining(COOLDOWN_DURATION - elapsed)
+          } else {
+            setCooldownRemaining(0)
+          }
+        }
+      } catch {}
+    }
+
+    checkCooldown()
+    const interval = setInterval(() => {
+      setCooldownRemaining((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(PORTFOLIO_DATA.personal.email)
@@ -21,9 +50,55 @@ export function Contact() {
     setTimeout(() => setCopiedEmail(false), 2000)
   }
 
+  const checkClientRateLimit = (): boolean => {
+    try {
+      const now = Date.now()
+      const rawHistory = localStorage.getItem('ps_contact_history')
+      let history: number[] = rawHistory ? JSON.parse(rawHistory) : []
+      
+      // Filter timestamps within current window
+      history = history.filter((ts) => now - ts < WINDOW_DURATION_MS)
+
+      if (history.length >= MAX_SUBMISSIONS_PER_WINDOW) {
+        const oldest = history[0]
+        const waitMins = Math.ceil((WINDOW_DURATION_MS - (now - oldest)) / 60000)
+        setErrorMessage(`Rate limit reached: Maximum ${MAX_SUBMISSIONS_PER_WINDOW} messages per 5 minutes. Please wait ${waitMins}m or email directly.`)
+        setFormStatus('error')
+        return false
+      }
+
+      // Record this submission
+      history.push(now)
+      localStorage.setItem('ps_contact_history', JSON.stringify(history))
+      localStorage.setItem('ps_last_contact_ts', String(now))
+      setCooldownRemaining(COOLDOWN_DURATION)
+      return true
+    } catch {
+      return true
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.name || !formData.email || !formData.message) return
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return
+
+    // Prevent submission if still under cooldown
+    if (cooldownRemaining > 0) {
+      setErrorMessage(`Please wait ${cooldownRemaining}s before sending another message.`)
+      setFormStatus('error')
+      return
+    }
+
+    // Honeypot check: if bot filled the hidden input, pretend success without sending
+    if (formData._gotcha) {
+      setFormStatus('success')
+      setFormData({ name: '', email: '', message: '', _gotcha: '' })
+      setTimeout(() => setFormStatus('idle'), 5000)
+      return
+    }
+
+    // Check sliding window rate limit
+    if (!checkClientRateLimit()) return
 
     setFormStatus('submitting')
     setErrorMessage('')
@@ -42,11 +117,12 @@ export function Contact() {
         },
         body: JSON.stringify({
           access_key: accessKey,
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          message: formData.message.trim(),
+          name: formData.name.trim().slice(0, 100),
+          email: formData.email.trim().slice(0, 150),
+          message: formData.message.trim().slice(0, 3000),
           subject: `Portfolio Inquiry from ${formData.name.trim()}`,
           from_name: 'Pratham Sali Portfolio',
+          botcheck: '',
         }),
       })
 
@@ -54,7 +130,7 @@ export function Contact() {
 
       if (response.ok && (data?.success || response.status === 200)) {
         setFormStatus('success')
-        setFormData({ name: '', email: '', message: '' })
+        setFormData({ name: '', email: '', message: '', _gotcha: '' })
         setTimeout(() => setFormStatus('idle'), 5000)
         return
       }
@@ -65,19 +141,23 @@ export function Contact() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+        }),
       })
       const serverData = await serverRes.json().catch(() => null)
 
       if (serverRes.ok && serverData?.success) {
         setFormStatus('success')
-        setFormData({ name: '', email: '', message: '' })
+        setFormData({ name: '', email: '', message: '', _gotcha: '' })
         setTimeout(() => setFormStatus('idle'), 5000)
       } else {
         setFormStatus('error')
         setErrorMessage(
-          data?.message ||
           serverData?.error ||
+          data?.message ||
           'Failed to send message. Please send an email directly.'
         )
       }
@@ -89,12 +169,16 @@ export function Contact() {
         const serverRes = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+          }),
         })
         const serverData = await serverRes.json().catch(() => null)
         if (serverRes.ok && serverData?.success) {
           setFormStatus('success')
-          setFormData({ name: '', email: '', message: '' })
+          setFormData({ name: '', email: '', message: '', _gotcha: '' })
           setTimeout(() => setFormStatus('idle'), 5000)
           return
         }
@@ -224,6 +308,19 @@ export function Contact() {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               </div>
 
+              {/* Honeypot field for anti-bot spam defense (hidden from humans) */}
+              <input
+                type="text"
+                name="_gotcha"
+                value={formData._gotcha}
+                onChange={(e) => setFormData({ ...formData, _gotcha: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+                className="hidden"
+                style={{ display: 'none' }}
+                aria-hidden="true"
+              />
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="contact-name" className="block font-mono text-xs uppercase tracking-wider text-slate-400 mb-2">
@@ -233,6 +330,7 @@ export function Contact() {
                     id="contact-name"
                     type="text"
                     required
+                    maxLength={80}
                     placeholder="Jane Doe"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -248,6 +346,7 @@ export function Contact() {
                     id="contact-email"
                     type="email"
                     required
+                    maxLength={120}
                     placeholder="jane@company.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -257,12 +356,18 @@ export function Contact() {
               </div>
 
               <div>
-                <label htmlFor="contact-message" className="block font-mono text-xs uppercase tracking-wider text-slate-400 mb-2">
-                  PROJECT / INQUIRY DETAILS
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label htmlFor="contact-message" className="block font-mono text-xs uppercase tracking-wider text-slate-400">
+                    PROJECT / INQUIRY DETAILS
+                  </label>
+                  <span className="font-mono text-[10px] text-slate-500">
+                    {formData.message.length}/2500
+                  </span>
+                </div>
                 <textarea
                   id="contact-message"
                   required
+                  maxLength={2500}
                   rows={4}
                   placeholder="Tell me about the product or opportunity..."
                   value={formData.message}
@@ -288,13 +393,27 @@ export function Contact() {
               <Magnetic className="w-full sm:w-auto">
                 <button
                   type="submit"
-                  disabled={formStatus === 'submitting'}
+                  disabled={formStatus === 'submitting' || cooldownRemaining > 0}
                   onMouseEnter={() => setCursor('contact')}
                   onMouseLeave={resetCursor}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs uppercase tracking-widest font-bold shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all duration-300 disabled:opacity-50"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:bg-blue-900/40 disabled:hover:bg-blue-900/40 text-white font-mono text-xs uppercase tracking-widest font-bold shadow-[0_0_30px_rgba(59,130,246,0.4)] disabled:shadow-none transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Send size={15} />
-                  <span>{formStatus === 'submitting' ? 'TRANSMITTING...' : "LET'S TALK →"}</span>
+                  {cooldownRemaining > 0 ? (
+                    <>
+                      <Clock size={15} className="animate-spin text-blue-300" />
+                      <span>COOLDOWN ({cooldownRemaining}S)</span>
+                    </>
+                  ) : formStatus === 'submitting' ? (
+                    <>
+                      <Send size={15} className="animate-pulse" />
+                      <span>TRANSMITTING...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={15} />
+                      <span>LET&apos;S TALK →</span>
+                    </>
+                  )}
                 </button>
               </Magnetic>
             </form>
